@@ -1,0 +1,112 @@
+import java.lang.System;
+import java.io.*;
+
+class Lexer {
+
+	Yylex tokenizer;
+	public  Lexer(String fileName) 
+	{
+	  try
+	  {
+	  tokenizer=new Yylex(new BufferedReader(new FileReader(fileName)));
+	  }
+	  catch(Exception e)
+	  {
+	  
+	  }	 
+	}
+	public Token nextToken()
+	{
+		Token next=null;
+		try
+		{
+		 next=  tokenizer.getToken();
+		}
+		catch(Exception e)
+		{
+		}
+		return next;
+	}
+	}
+
+
+%%
+
+
+%function getToken
+%type Token
+%char
+%line
+
+
+%{
+	//initialize  variables to be used by class
+%}
+
+
+%init{
+
+//Add code to be executed on initialization of the lexer
+
+%init}
+
+NEWLINE=[\n]
+TAB=[\t]
+SPACE=[" "*]
+PACKAGE=(package)
+IMPORT=(import)
+IDENTIFIER=["package"]
+CONST=(const)
+EQUAL=(=)
+FUNC=(FUNC)
+OPEN_PARAN=(\()
+CLOSE_PARAN=(\))
+OPEN_CURLY=(\{)
+CLOSE_CURLY=(\})
+DOT=(\.)
+VAR=(var)
+SLASH=(/)
+SWITCH=(switch)
+COLON_EQUAL=(:=)
+SEMI_COLON=(;)
+CASE=(case)
+COLON=(:)
+DEFAULT=(default)
+COMMA=(,)
+REL_OP =(==)|(!=)|(<)|(<=)|(>)|(>=)
+
+%eofval{
+//Add code to be executed when the end of the file is reached
+return (new Token(Token.EOF,"Done"));
+
+%eofval}
+
+
+%% 
+<YYINITIAL> {NEWLINE} {}
+<YYINITIAL> {SPACE} {}
+<YYINITIAL> {TAB} {}
+<YYINITIAL> {PACKAGE} { return (new Token(Token.PACKAGE,yytext()));}
+<YYINITIAL> {IMPORT} { return (new Token(Token.IMPORT,yytext()));}
+<YYINITIAL> {CONST} { return (new Token(Token.CONST,yytext()));}
+<YYINITIAL> {EQUAL} { return (new Token(Token.EQUAL,yytext()));}
+<YYINITIAL> {FUNC} { return (new Token(Token.FUNC,yytext()));}
+<YYINITIAL> {OPEN_PARAN} { return (new Token(Token.OPEN_PARAN,yytext()));}
+<YYINITIAL> {CLOSE_PARAN} { return (new Token(Token.CLOSE_PARAN,yytext()));}
+<YYINITIAL> {OPEN_CURLY} { return (new Token(Token.OPEN_CURLY,yytext()));}
+<YYINITIAL> {CLOSE_CURLY} { return (new Token(Token.CLOSE_CURLY,yytext()));}
+<YYINITIAL> {DOT} { return (new Token(Token.DOT,yytext()));}
+<YYINITIAL> {VAR} { return (new Token(Token.VAR,yytext()));}
+<YYINITIAL> {SLASH} { return (new Token(Token.SLASH,yytext()));}
+<YYINITIAL> {SWITCH} { return (new Token(Token.SWITCH,yytext()));}
+<YYINITIAL> {COLON_EQUAL} { return (new Token(Token.COLON_EQUAL,yytext()));}
+<YYINITIAL> {SEMI_COLON} { return (new Token(Token.SEMI_COLON,yytext()));}
+<YYINITIAL> {CASE} { return (new Token(Token.CASE,yytext()));}
+<YYINITIAL> {COLON} { return (new Token(Token.COLON,yytext()));}
+<YYINITIAL> {DEFAULT} { return (new Token(Token.DEFAULT,yytext()));}
+<YYINITIAL> {COMMA} { return (new Token(Token.COMMA,yytext()));}
+<YYINITIAL> {REL_OP} { return (new Token(Token.REL_OP,yytext()));}
+
+<YYINITIAL> . {
+  return new Token(Token.ERROR, "Invalid input: " + yytext());
+}
