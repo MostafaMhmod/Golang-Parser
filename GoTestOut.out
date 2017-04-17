@@ -4,33 +4,125 @@ ERROR: Invalid input: a
 ERROR: Invalid input: i
 ERROR: Invalid input: n
 IMPORT : import
+OPEN_PARAN : (
 ERROR: Invalid input: "
 ERROR: Invalid input: f
 ERROR: Invalid input: m
 ERROR: Invalid input: t
 ERROR: Invalid input: "
-IMPORT : import
 ERROR: Invalid input: "
 ERROR: Invalid input: m
 ERROR: Invalid input: a
 ERROR: Invalid input: t
 ERROR: Invalid input: h
 ERROR: Invalid input: "
-CONST : const
-ERROR: Invalid input: s
-ERROR: Invalid input: s
+CLOSE_PARAN : )
+ERROR: Invalid input: f
+ERROR: Invalid input: u
+ERROR: Invalid input: n
+ERROR: Invalid input: c
+ERROR: Invalid input: p
+ERROR: Invalid input: o
+ERROR: Invalid input: w
+OPEN_PARAN : (
+ERROR: Invalid input: x
+COMMA : ,
+ERROR: Invalid input: n
+COMMA : ,
+ERROR: Invalid input: l
+ERROR: Invalid input: i
+ERROR: Invalid input: m
+ERROR: Invalid input: f
+ERROR: Invalid input: l
+ERROR: Invalid input: o
+ERROR: Invalid input: a
 ERROR: Invalid input: t
+ERROR: Invalid input: 6
+ERROR: Invalid input: 4
+CLOSE_PARAN : )
+ERROR: Invalid input: f
+ERROR: Invalid input: l
+ERROR: Invalid input: o
+ERROR: Invalid input: a
+ERROR: Invalid input: t
+ERROR: Invalid input: 6
+ERROR: Invalid input: 4
+OPEN_CURLY : {
+ERROR: Invalid input: i
+ERROR: Invalid input: f
+ERROR: Invalid input: v
+COLON_EQUAL : :=
+ERROR: Invalid input: m
+ERROR: Invalid input: a
+ERROR: Invalid input: t
+ERROR: Invalid input: h
+DOT : .
+ERROR: Invalid input: P
+ERROR: Invalid input: o
+ERROR: Invalid input: w
+OPEN_PARAN : (
+ERROR: Invalid input: x
+COMMA : ,
+ERROR: Invalid input: n
+CLOSE_PARAN : )
+SEMI_COLON : ;
+ERROR: Invalid input: v
+REL_OP : <
+ERROR: Invalid input: l
+ERROR: Invalid input: i
+ERROR: Invalid input: m
+OPEN_CURLY : {
+ERROR: Invalid input: r
+ERROR: Invalid input: e
+ERROR: Invalid input: t
+ERROR: Invalid input: u
+ERROR: Invalid input: r
+ERROR: Invalid input: n
+ERROR: Invalid input: v
+CLOSE_CURLY : }
+ERROR: Invalid input: e
+ERROR: Invalid input: l
+ERROR: Invalid input: s
+ERROR: Invalid input: e
+OPEN_CURLY : {
+ERROR: Invalid input: f
+ERROR: Invalid input: m
+ERROR: Invalid input: t
+DOT : .
+ERROR: Invalid input: P
 ERROR: Invalid input: r
 ERROR: Invalid input: i
 ERROR: Invalid input: n
-ERROR: Invalid input: g
-EQUAL : =
-ERROR: Invalid input: "
-CONST : const
-ERROR: Invalid input: a
-ERROR: Invalid input: n
 ERROR: Invalid input: t
+ERROR: Invalid input: f
+OPEN_PARAN : (
 ERROR: Invalid input: "
+ERROR: Invalid input: %
+ERROR: Invalid input: g
+REL_OP : >=
+ERROR: Invalid input: %
+ERROR: Invalid input: g
+ERROR: Invalid input: \
+ERROR: Invalid input: n
+ERROR: Invalid input: "
+COMMA : ,
+ERROR: Invalid input: v
+COMMA : ,
+ERROR: Invalid input: l
+ERROR: Invalid input: i
+ERROR: Invalid input: m
+CLOSE_PARAN : )
+CLOSE_CURLY : }
+ERROR: Invalid input: r
+ERROR: Invalid input: e
+ERROR: Invalid input: t
+ERROR: Invalid input: u
+ERROR: Invalid input: r
+ERROR: Invalid input: n
+ERROR: Invalid input: l
+ERROR: Invalid input: i
+ERROR: Invalid input: m
+CLOSE_CURLY : }
 ERROR: Invalid input: f
 ERROR: Invalid input: u
 ERROR: Invalid input: n
@@ -54,66 +146,30 @@ ERROR: Invalid input: t
 ERROR: Invalid input: l
 ERROR: Invalid input: n
 OPEN_PARAN : (
-ERROR: Invalid input: s
-CLOSE_PARAN : )
-CONST : const
-ERROR: Invalid input: n
-EQUAL : =
-ERROR: Invalid input: 5
-ERROR: Invalid input: 0
-ERROR: Invalid input: 0
-ERROR: Invalid input: 0
-ERROR: Invalid input: 0
-ERROR: Invalid input: 0
-ERROR: Invalid input: 0
-ERROR: Invalid input: 0
-ERROR: Invalid input: 0
-VAR : var
-ERROR: Invalid input: d
-EQUAL : =
+ERROR: Invalid input: p
+ERROR: Invalid input: o
+ERROR: Invalid input: w
+OPEN_PARAN : (
 ERROR: Invalid input: 3
-ERROR: Invalid input: e
+COMMA : ,
+ERROR: Invalid input: 2
+COMMA : ,
+ERROR: Invalid input: 1
+ERROR: Invalid input: 0
+CLOSE_PARAN : )
+COMMA : ,
+ERROR: Invalid input: p
+ERROR: Invalid input: o
+ERROR: Invalid input: w
+OPEN_PARAN : (
+ERROR: Invalid input: 3
+COMMA : ,
+ERROR: Invalid input: 3
+COMMA : ,
 ERROR: Invalid input: 2
 ERROR: Invalid input: 0
-SLASH : /
-ERROR: Invalid input: n
-ERROR: Invalid input: f
-ERROR: Invalid input: m
-ERROR: Invalid input: t
-DOT : .
-ERROR: Invalid input: P
-ERROR: Invalid input: r
-ERROR: Invalid input: i
-ERROR: Invalid input: n
-ERROR: Invalid input: t
-ERROR: Invalid input: l
-ERROR: Invalid input: n
-OPEN_PARAN : (
-ERROR: Invalid input: d
 CLOSE_PARAN : )
-ERROR: Invalid input: f
-ERROR: Invalid input: m
-ERROR: Invalid input: t
-DOT : .
-ERROR: Invalid input: P
-ERROR: Invalid input: r
-ERROR: Invalid input: i
-ERROR: Invalid input: n
-ERROR: Invalid input: t
-ERROR: Invalid input: l
-ERROR: Invalid input: n
-OPEN_PARAN : (
-ERROR: Invalid input: m
-ERROR: Invalid input: a
-ERROR: Invalid input: t
-ERROR: Invalid input: h
-DOT : .
-ERROR: Invalid input: S
-ERROR: Invalid input: i
-ERROR: Invalid input: n
-OPEN_PARAN : (
-ERROR: Invalid input: n
-CLOSE_PARAN : )
+COMMA : ,
 CLOSE_PARAN : )
 CLOSE_CURLY : }
 EOF: Done

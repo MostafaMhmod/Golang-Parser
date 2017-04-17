@@ -53,6 +53,7 @@ class Lexer {
 NEWLINE=[\n]
 TAB=[\t]
 SPACE=[" "*]
+COMMENT=(//(.)*)
 PACKAGE=(package)
 IMPORT=(import)
 IDENTIFIER=["package"]
@@ -74,6 +75,9 @@ COLON=(:)
 DEFAULT=(default)
 COMMA=(,)
 REL_OP =(==)|(!=)|(<)|(<=)|(>)|(>=)
+ADD_OP = (\+)|(-)|(\|) 
+MUL_OP = (\*)|(/)|(%)|(<<)|(>>)|(&)
+UNARY_OP = (\+)|(-)|(!)|(\*)|(&)|(<-)
 
 %eofval{
 //Add code to be executed when the end of the file is reached
@@ -86,6 +90,7 @@ return (new Token(Token.EOF,"Done"));
 <YYINITIAL> {NEWLINE} {}
 <YYINITIAL> {SPACE} {}
 <YYINITIAL> {TAB} {}
+<YYINITIAL> {COMMENT} {}
 <YYINITIAL> {PACKAGE} { return (new Token(Token.PACKAGE,yytext()));}
 <YYINITIAL> {IMPORT} { return (new Token(Token.IMPORT,yytext()));}
 <YYINITIAL> {CONST} { return (new Token(Token.CONST,yytext()));}

@@ -254,40 +254,67 @@ class Yylex {
 		/* 15 */ YY_NO_ANCHOR,
 		/* 16 */ YY_NO_ANCHOR,
 		/* 17 */ YY_NO_ANCHOR,
-		/* 18 */ YY_NOT_ACCEPT,
+		/* 18 */ YY_NO_ANCHOR,
 		/* 19 */ YY_NO_ANCHOR,
-		/* 20 */ YY_NOT_ACCEPT,
+		/* 20 */ YY_NO_ANCHOR,
 		/* 21 */ YY_NO_ANCHOR,
-		/* 22 */ YY_NOT_ACCEPT,
+		/* 22 */ YY_NO_ANCHOR,
 		/* 23 */ YY_NO_ANCHOR,
-		/* 24 */ YY_NOT_ACCEPT,
+		/* 24 */ YY_NO_ANCHOR,
 		/* 25 */ YY_NO_ANCHOR,
-		/* 26 */ YY_NOT_ACCEPT,
+		/* 26 */ YY_NO_ANCHOR,
 		/* 27 */ YY_NOT_ACCEPT,
-		/* 28 */ YY_NOT_ACCEPT,
-		/* 29 */ YY_NOT_ACCEPT,
+		/* 28 */ YY_NO_ANCHOR,
+		/* 29 */ YY_NO_ANCHOR,
 		/* 30 */ YY_NOT_ACCEPT,
-		/* 31 */ YY_NOT_ACCEPT,
+		/* 31 */ YY_NO_ANCHOR,
 		/* 32 */ YY_NOT_ACCEPT,
-		/* 33 */ YY_NOT_ACCEPT,
+		/* 33 */ YY_NO_ANCHOR,
 		/* 34 */ YY_NOT_ACCEPT,
-		/* 35 */ YY_NOT_ACCEPT,
+		/* 35 */ YY_NO_ANCHOR,
 		/* 36 */ YY_NOT_ACCEPT,
-		/* 37 */ YY_NO_ANCHOR
+		/* 37 */ YY_NO_ANCHOR,
+		/* 38 */ YY_NOT_ACCEPT,
+		/* 39 */ YY_NO_ANCHOR,
+		/* 40 */ YY_NOT_ACCEPT,
+		/* 41 */ YY_NO_ANCHOR,
+		/* 42 */ YY_NOT_ACCEPT,
+		/* 43 */ YY_NO_ANCHOR,
+		/* 44 */ YY_NOT_ACCEPT,
+		/* 45 */ YY_NOT_ACCEPT,
+		/* 46 */ YY_NOT_ACCEPT,
+		/* 47 */ YY_NOT_ACCEPT,
+		/* 48 */ YY_NOT_ACCEPT,
+		/* 49 */ YY_NOT_ACCEPT,
+		/* 50 */ YY_NOT_ACCEPT,
+		/* 51 */ YY_NOT_ACCEPT,
+		/* 52 */ YY_NOT_ACCEPT,
+		/* 53 */ YY_NOT_ACCEPT,
+		/* 54 */ YY_NOT_ACCEPT,
+		/* 55 */ YY_NOT_ACCEPT,
+		/* 56 */ YY_NOT_ACCEPT,
+		/* 57 */ YY_NOT_ACCEPT,
+		/* 58 */ YY_NOT_ACCEPT,
+		/* 59 */ YY_NOT_ACCEPT,
+		/* 60 */ YY_NOT_ACCEPT,
+		/* 61 */ YY_NOT_ACCEPT
 	};
 	private int yy_cmap[] = unpackFromString(1,130,
-"29:9,3,1,29:2,0,29:18,2,29:7,22,23,2,29:3,26,28,29:13,17,29:5,21,29:2,18,29" +
-":7,20,29:6,19,29:11,5,29,6,29,9,29,8,29,10,29,7,29,11,15,12,4,29,13,16,14,2" +
-"9,27,29:4,24,29,25,29:2,30:2")[0];
+"5:9,3,1,5:2,0,5:18,2,39,5:6,24,25,2,5,38,5,28,4,5:10,32,33,40,19,40,5:4,23," +
+"5:2,20,5:7,22,5:6,21,5:11,7,5,8,34,11,35,10,31,12,5,9,37,13,17,14,6,5,15,18" +
+",16,36,29,30,5:3,26,5,27,5:2,41:2")[0];
 
-	private int yy_rmap[] = unpackFromString(1,38,
-"0,1:3,2,1:13,3,1,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21")[0];
+	private int yy_rmap[] = unpackFromString(1,62,
+"0,1:3,2,1,3,1:5,4,1:2,3,1,5,1:9,6,7,1,8,9,10,11,12,13,14,15,16,17,18,19,20," +
+"3,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38")[0];
 
-	private int yy_nxt[][] = unpackFromString(22,31,
-"-1,1,2,3,4,19,21,19:3,23,19:6,5,25,19:3,6,7,8,9,10,37,11,19,12,-1:36,18,-1:" +
-"31,27,-1:39,28,-1:27,20,-1:22,29,-1:37,22,-1:39,30,-1:29,24,-1:24,13,-1:24," +
-"31,-1:39,32,-1:26,33,-1:39,14,-1:14,34,-1:39,15,-1:29,35,-1:25,36,-1:36,16," +
-"-1:25,17,-1:26,26,-1:25");
+	private int yy_nxt[][] = unpackFromString(39,42,
+"-1,1,2,3,4,5,28,5,31,5:3,33,5:5,35,6,37,5:3,7,8,9,10,11,39,5:2,12,13,41,5:3" +
+",14,43,15,16,-1:46,17,-1:56,29,-1:41,18,-1:24,17:39,-1:9,44,-1:40,27,-1:52," +
+"45,-1:30,30,-1:6,32,-1:44,46,-1:37,34,-1:34,47,-1:65,36,-1:23,48,-1:50,38,-" +
+"1:42,49,-1:26,40,-1:49,19,-1:37,42,-1:65,50,-1:15,61,-1:43,20,-1:48,51,-1:3" +
+"7,52,-1:43,53,-1:48,21,-1:25,54,-1:50,22,-1:40,56,-1:34,57,-1:69,58,-1:15,5" +
+"9,-1:47,23,-1:56,24,-1:47,60,-1:15,25,-1:46,26,-1:32,55,-1:34");
 
 	public Token getToken ()
 		throws java.io.IOException {
@@ -348,92 +375,150 @@ return (new Token(Token.EOF,"Done"));
 					case -4:
 						break;
 					case 4:
-						{
-  return new Token(Token.ERROR, "Invalid input: " + yytext());
-}
+						{ return (new Token(Token.SLASH,yytext()));}
 					case -5:
 						break;
 					case 5:
-						{ return (new Token(Token.EQUAL,yytext()));}
+						{
+  return new Token(Token.ERROR, "Invalid input: " + yytext());
+}
 					case -6:
 						break;
 					case 6:
-						{ return (new Token(Token.OPEN_PARAN,yytext()));}
+						{ return (new Token(Token.EQUAL,yytext()));}
 					case -7:
 						break;
 					case 7:
-						{ return (new Token(Token.CLOSE_PARAN,yytext()));}
+						{ return (new Token(Token.OPEN_PARAN,yytext()));}
 					case -8:
 						break;
 					case 8:
-						{ return (new Token(Token.OPEN_CURLY,yytext()));}
+						{ return (new Token(Token.CLOSE_PARAN,yytext()));}
 					case -9:
 						break;
 					case 9:
-						{ return (new Token(Token.CLOSE_CURLY,yytext()));}
+						{ return (new Token(Token.OPEN_CURLY,yytext()));}
 					case -10:
 						break;
 					case 10:
-						{ return (new Token(Token.DOT,yytext()));}
+						{ return (new Token(Token.CLOSE_CURLY,yytext()));}
 					case -11:
 						break;
 					case 11:
-						{ return (new Token(Token.SLASH,yytext()));}
+						{ return (new Token(Token.DOT,yytext()));}
 					case -12:
 						break;
 					case 12:
-						
+						{ return (new Token(Token.COLON,yytext()));}
 					case -13:
 						break;
 					case 13:
-						{ return (new Token(Token.VAR,yytext()));}
+						{ return (new Token(Token.SEMI_COLON,yytext()));}
 					case -14:
 						break;
 					case 14:
-						{ return (new Token(Token.FUNC,yytext()));}
+						{ return (new Token(Token.COMMA,yytext()));}
 					case -15:
 						break;
 					case 15:
-						{ return (new Token(Token.CONST,yytext()));}
+						{ return (new Token(Token.REL_OP,yytext()));}
 					case -16:
 						break;
 					case 16:
-						{ return (new Token(Token.IMPORT,yytext()));}
+						
 					case -17:
 						break;
 					case 17:
-						{ return (new Token(Token.PACKAGE,yytext()));}
+						{}
 					case -18:
 						break;
-					case 19:
-						{
-  return new Token(Token.ERROR, "Invalid input: " + yytext());
-}
+					case 18:
+						{ return (new Token(Token.COLON_EQUAL,yytext()));}
 					case -19:
 						break;
-					case 21:
-						{
-  return new Token(Token.ERROR, "Invalid input: " + yytext());
-}
+					case 19:
+						{ return (new Token(Token.VAR,yytext()));}
 					case -20:
 						break;
-					case 23:
-						{
-  return new Token(Token.ERROR, "Invalid input: " + yytext());
-}
+					case 20:
+						{ return (new Token(Token.CASE,yytext()));}
 					case -21:
 						break;
+					case 21:
+						{ return (new Token(Token.FUNC,yytext()));}
+					case -22:
+						break;
+					case 22:
+						{ return (new Token(Token.CONST,yytext()));}
+					case -23:
+						break;
+					case 23:
+						{ return (new Token(Token.IMPORT,yytext()));}
+					case -24:
+						break;
+					case 24:
+						{ return (new Token(Token.SWITCH,yytext()));}
+					case -25:
+						break;
 					case 25:
+						{ return (new Token(Token.PACKAGE,yytext()));}
+					case -26:
+						break;
+					case 26:
+						{ return (new Token(Token.DEFAULT,yytext()));}
+					case -27:
+						break;
+					case 28:
 						{
   return new Token(Token.ERROR, "Invalid input: " + yytext());
 }
-					case -22:
+					case -28:
+						break;
+					case 29:
+						{ return (new Token(Token.REL_OP,yytext()));}
+					case -29:
+						break;
+					case 31:
+						{
+  return new Token(Token.ERROR, "Invalid input: " + yytext());
+}
+					case -30:
+						break;
+					case 33:
+						{
+  return new Token(Token.ERROR, "Invalid input: " + yytext());
+}
+					case -31:
+						break;
+					case 35:
+						{
+  return new Token(Token.ERROR, "Invalid input: " + yytext());
+}
+					case -32:
 						break;
 					case 37:
 						{
   return new Token(Token.ERROR, "Invalid input: " + yytext());
 }
-					case -23:
+					case -33:
+						break;
+					case 39:
+						{
+  return new Token(Token.ERROR, "Invalid input: " + yytext());
+}
+					case -34:
+						break;
+					case 41:
+						{
+  return new Token(Token.ERROR, "Invalid input: " + yytext());
+}
+					case -35:
+						break;
+					case 43:
+						{
+  return new Token(Token.ERROR, "Invalid input: " + yytext());
+}
+					case -36:
 						break;
 					default:
 						yy_error(YY_E_INTERNAL,false);
