@@ -18,7 +18,7 @@ import java.io.IOException;
  */
 public class MLA {
 	public static void main(String[] args) {
-		String inFile = "Go8.in";
+		String inFile = "Go2.in";
 		String outFile = "GoTestOut.out";
 
 		if (args.length > 1) {

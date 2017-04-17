@@ -56,14 +56,15 @@ SPACE=[" "*]
 COMMENT=(//(.)*)
 PACKAGE=(package)
 IMPORT=(import)
-IDENTIFIER=["package"]
 CONST=(const)
 EQUAL=(=)
-FUNC=(FUNC)
+FUNC=(func)
 OPEN_PARAN=(\()
 CLOSE_PARAN=(\))
 OPEN_CURLY=(\{)
 CLOSE_CURLY=(\})
+OPEN_SQUARE=(\[)
+CLOSE_SQUARE=(\])
 DOT=(\.)
 VAR=(var)
 SLASH=(/)
@@ -74,10 +75,26 @@ CASE=(case)
 COLON=(:)
 DEFAULT=(default)
 COMMA=(,)
+IF=(if)
+ELSE=(else)
+RETURN=(return)
 REL_OP =(==)|(!=)|(<)|(<=)|(>)|(>=)
 ADD_OP = (\+)|(-)|(\|) 
 MUL_OP = (\*)|(/)|(%)|(<<)|(>>)|(&)
 UNARY_OP = (\+)|(-)|(!)|(\*)|(&)|(<-)
+OR_OP=(\|)
+AND_OP=(&&)
+PLUS=(\+)
+MINUS=(\-)
+SHIFT_LEFT=(<<)
+SHIFT_RIGHT=(>>)
+BREAK=(break)
+STRUCT=(struct)
+TYPE=(type)
+FOR=(for)
+PERCENT=(%)
+IDENTIFIER=^((break)|(default)|(func)|(case)|(struct)|(else)|(package)|(switch)|(const)|(if)|(range)|(type)|(continue)|(for)|(import)|(return)|(var))
+
 
 %eofval{
 //Add code to be executed when the end of the file is reached
@@ -100,6 +117,8 @@ return (new Token(Token.EOF,"Done"));
 <YYINITIAL> {CLOSE_PARAN} { return (new Token(Token.CLOSE_PARAN,yytext()));}
 <YYINITIAL> {OPEN_CURLY} { return (new Token(Token.OPEN_CURLY,yytext()));}
 <YYINITIAL> {CLOSE_CURLY} { return (new Token(Token.CLOSE_CURLY,yytext()));}
+<YYINITIAL> {OPEN_SQUARE} { return (new Token(Token.OPEN_SQUARE,yytext()));}
+<YYINITIAL> {CLOSE_SQUARE} { return (new Token(Token.CLOSE_SQUARE,yytext()));}
 <YYINITIAL> {DOT} { return (new Token(Token.DOT,yytext()));}
 <YYINITIAL> {VAR} { return (new Token(Token.VAR,yytext()));}
 <YYINITIAL> {SLASH} { return (new Token(Token.SLASH,yytext()));}
@@ -110,7 +129,21 @@ return (new Token(Token.EOF,"Done"));
 <YYINITIAL> {COLON} { return (new Token(Token.COLON,yytext()));}
 <YYINITIAL> {DEFAULT} { return (new Token(Token.DEFAULT,yytext()));}
 <YYINITIAL> {COMMA} { return (new Token(Token.COMMA,yytext()));}
+<YYINITIAL> {IF} { return (new Token(Token.IF,yytext()));}
+<YYINITIAL> {ELSE} { return (new Token(Token.ELSE,yytext()));}
 <YYINITIAL> {REL_OP} { return (new Token(Token.REL_OP,yytext()));}
+<YYINITIAL> {OR_OP} { return (new Token(Token.OR_OP,yytext()));}
+<YYINITIAL> {AND_OP} { return (new Token(Token.AND_OP,yytext()));}
+<YYINITIAL> {PLUS} { return (new Token(Token.PLUS,yytext()));}
+<YYINITIAL> {MINUS} { return (new Token(Token.MINUS,yytext()));}
+<YYINITIAL> {SHIFT_LEFT} { return (new Token(Token.SHIFT_LEFT,yytext()));}
+<YYINITIAL> {SHIFT_RIGHT} { return (new Token(Token.SHIFT_RIGHT,yytext()));}
+<YYINITIAL> {RETURN} { return (new Token(Token.RETURN,yytext()));}
+<YYINITIAL> {BREAK} { return (new Token(Token.BREAK,yytext()));}
+<YYINITIAL> {STRUCT} { return (new Token(Token.STRUCT,yytext()));}
+<YYINITIAL> {TYPE} { return (new Token(Token.TYPE,yytext()));}
+<YYINITIAL> {FOR} { return (new Token(Token.FOR,yytext()));}
+<YYINITIAL> {PERCENT} { return (new Token(Token.PERCENT,yytext()));}
 
 <YYINITIAL> . {
   return new Token(Token.ERROR, "Invalid input: " + yytext());
