@@ -1,91 +1,26 @@
-IDENTIFIER : p
-ERROR: Invalid input: a
-ERROR: Invalid input: c
-ERROR: Invalid input: k
-ERROR: Invalid input: a
-ERROR: Invalid input: g
-ERROR: Invalid input: e
-ERROR: Invalid input: m
-ERROR: Invalid input: a
-ERROR: Invalid input: i
-ERROR: Invalid input: n
-IDENTIFIER : i
-ERROR: Invalid input: m
-ERROR: Invalid input: p
-ERROR: Invalid input: o
-ERROR: Invalid input: r
-ERROR: Invalid input: t
+PACKAGE : package
+IDENTIFIER : main
+IMPORT : import
 OPEN_PARAN : (
-ERROR: Invalid input: "
-ERROR: Invalid input: f
-ERROR: Invalid input: m
-ERROR: Invalid input: t
-ERROR: Invalid input: "
-ERROR: Invalid input: "
-ERROR: Invalid input: m
-ERROR: Invalid input: a
-ERROR: Invalid input: t
-ERROR: Invalid input: h
-ERROR: Invalid input: "
-IDENTIFIER : )
-IDENTIFIER : f
-ERROR: Invalid input: u
-ERROR: Invalid input: n
-ERROR: Invalid input: c
-ERROR: Invalid input: m
-ERROR: Invalid input: a
-ERROR: Invalid input: i
-ERROR: Invalid input: n
+STRING_LIT : "fmt"
+STRING_LIT : "math"
+CLOSE_PARAN : )
+FUNC : func
+IDENTIFIER : main
 OPEN_PARAN : (
 CLOSE_PARAN : )
 OPEN_CURLY : {
-ERROR: Invalid input: f
-ERROR: Invalid input: m
-ERROR: Invalid input: t
+IDENTIFIER : fmt
 DOT : .
-ERROR: Invalid input: p
-ERROR: Invalid input: r
-ERROR: Invalid input: i
-ERROR: Invalid input: n
-ERROR: Invalid input: t
-ERROR: Invalid input: l
-ERROR: Invalid input: n
+IDENTIFIER : println
 OPEN_PARAN : (
-ERROR: Invalid input: "
-ERROR: Invalid input: n
-ERROR: Invalid input: o
-ERROR: Invalid input: w
-ERROR: Invalid input: y
-ERROR: Invalid input: o
-ERROR: Invalid input: u
-ERROR: Invalid input: h
-ERROR: Invalid input: a
-ERROR: Invalid input: v
-ERROR: Invalid input: e
-PERCENT : %
-ERROR: Invalid input: g
-ERROR: Invalid input: p
-ERROR: Invalid input: r
-ERROR: Invalid input: o
-ERROR: Invalid input: b
-ERROR: Invalid input: l
-ERROR: Invalid input: e
-ERROR: Invalid input: m
-ERROR: Invalid input: s
-DOT : .
-ERROR: Invalid input: "
+STRING_LIT : "now you have %g problems."
 COMMA : ,
-ERROR: Invalid input: m
-ERROR: Invalid input: a
-ERROR: Invalid input: t
-ERROR: Invalid input: h
+IDENTIFIER : math
 DOT : .
-ERROR: Invalid input: s
-ERROR: Invalid input: q
-ERROR: Invalid input: r
-ERROR: Invalid input: t
+IDENTIFIER : sqrt
 OPEN_PARAN : (
-ERROR: Invalid input: 7
+INT_LIT : 7
 CLOSE_PARAN : )
 CLOSE_CURLY : }
 EOF: Done
