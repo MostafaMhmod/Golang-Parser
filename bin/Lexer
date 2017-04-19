@@ -1,5 +1,7 @@
 import java.lang.System;
 import java.io.*;
+import java.util.Stack;
+
 
 class Lexer {
 
@@ -41,13 +43,24 @@ class Lexer {
 
 %{
 	//initialize  variables to be used by class
+	//boolean existAnError=false;
+	public static Stack<String> errorTrack = new Stack<String>();
+
+	public static boolean checkForError(String compare) {
+		if (errorTrack.peek().equals(compare))
+			return true;
+		else
+			return false;
+	}
+		
 %}
 
 
 %init{
 
-//Add code to be executed on initialization of the lexer
+	//Add code to be executed on initialization of the lexer
 
+	
 %init}
 
 NEWLINE=[\n]
@@ -79,10 +92,7 @@ IF=(if)
 ELSE=(else)
 RETURN=(return)
 REL_OP =(==)|(!=)|(<)|(<=)|(>)|(>=)
-ADD_OP = (\+)|(-)|(\|) 
-MUL_OP = (\*)|(/)|(%)|(<<)|(>>)|(&)
-UNARY_OP = (\+)|(-)|(!)|(\*)|(&)|(<-)
-OR_OP=(\|)
+OR_OP=(\|\|)
 AND_OP=(&&)
 PLUS=(\+)
 MINUS=(\-)
@@ -92,15 +102,33 @@ BREAK=(break)
 STRUCT=(struct)
 TYPE=(type)
 FOR=(for)
-PERCENT=(%)
-INT_LIT=([0-9][0-9]*)|0
+INT_LIT=([1-9][0-9]*)|0
 IDENTIFIERTEST=[(.)]*[^"(break|default|func|case|struct|else|package|switch|const|if|range|type|continue|for|import|return|var)"]
-IDENTIFIER=[A-Za-z0-9_]*
+IDENTIFIER=[A-Za-z_]*[0-9]*
 STRING_LIT=\"(.)*\"
+CDOTS=(\.\.\.)
+ASTRISK=(\*)
+BAR=(\|)
+EXCLAMATION=(!)
+LESS_DASH=(<\-)
+AMBERSAND=(&)
+PERCENT=(%)
+INCREMENT=(\+\+)
+DECREMENT=(\-\-)
+
 
 %eofval{
-//Add code to be executed when the end of the file is reached
-return (new Token(Token.EOF,"Done"));
+	//Add code to be executed when the end of the file is reached
+	
+	if(errorTrack.isEmpty())
+	{
+	return (new Token(Token.EOF,"Done"));
+	}
+	
+	else if (!errorTrack.isEmpty())
+	{
+	return (new Token(Token.EOF,"There is some "+ errorTrack.peek() +"  that is not closed"));
+	}
 
 %eofval}
 
@@ -115,12 +143,6 @@ return (new Token(Token.EOF,"Done"));
 <YYINITIAL> {CONST} { return (new Token(Token.CONST,yytext()));}
 <YYINITIAL> {EQUAL} { return (new Token(Token.EQUAL,yytext()));}
 <YYINITIAL> {FUNC} { return (new Token(Token.FUNC,yytext()));}
-<YYINITIAL> {OPEN_PARAN} { return (new Token(Token.OPEN_PARAN,yytext()));}
-<YYINITIAL> {CLOSE_PARAN} { return (new Token(Token.CLOSE_PARAN,yytext()));}
-<YYINITIAL> {OPEN_CURLY} { return (new Token(Token.OPEN_CURLY,yytext()));}
-<YYINITIAL> {CLOSE_CURLY} { return (new Token(Token.CLOSE_CURLY,yytext()));}
-<YYINITIAL> {OPEN_SQUARE} { return (new Token(Token.OPEN_SQUARE,yytext()));}
-<YYINITIAL> {CLOSE_SQUARE} { return (new Token(Token.CLOSE_SQUARE,yytext()));}
 <YYINITIAL> {DOT} { return (new Token(Token.DOT,yytext()));}
 <YYINITIAL> {VAR} { return (new Token(Token.VAR,yytext()));}
 <YYINITIAL> {SLASH} { return (new Token(Token.SLASH,yytext()));}
@@ -145,10 +167,87 @@ return (new Token(Token.EOF,"Done"));
 <YYINITIAL> {STRUCT} { return (new Token(Token.STRUCT,yytext()));}
 <YYINITIAL> {TYPE} { return (new Token(Token.TYPE,yytext()));}
 <YYINITIAL> {FOR} { return (new Token(Token.FOR,yytext()));}
-<YYINITIAL> {PERCENT} { return (new Token(Token.PERCENT,yytext()));}
 <YYINITIAL> {INT_LIT} { return (new Token(Token.INT_LIT,yytext()));}
 <YYINITIAL> {IDENTIFIER} { return (new Token(Token.IDENTIFIER,yytext()));}
 <YYINITIAL> {STRING_LIT} { return (new Token(Token.STRING_LIT,yytext()));}
+<YYINITIAL> {CDOTS} { return (new Token(Token.CDOTS,yytext()));}
+<YYINITIAL> {ASTRISK} { return (new Token(Token.ASTRISK,yytext()));}
+<YYINITIAL> {BAR} { return (new Token(Token.BAR,yytext()));}
+<YYINITIAL> {EXCLAMATION} { return (new Token(Token.EXCLAMATION,yytext()));}
+<YYINITIAL> {LESS_DASH} { return (new Token(Token.LESS_DASH,yytext()));}
+<YYINITIAL> {AMBERSAND} { return (new Token(Token.AMBERSAND,yytext()));}
+<YYINITIAL> {PERCENT} { return (new Token(Token.PERCENT,yytext()));}
+<YYINITIAL> {INCREMENT} { return (new Token(Token.INCREMENT,yytext()));}
+<YYINITIAL> {DECREMENT} { return (new Token(Token.DECREMENT,yytext()));}
+
+<YYINITIAL> {OPEN_PARAN} {
+	errorTrack.push("(");
+	return (new Token(Token.OPEN_PARAN,yytext()));
+}
+
+<YYINITIAL> {CLOSE_PARAN} { 
+	
+	if(checkForError("(")&&(!errorTrack.isEmpty()))
+	{
+	  errorTrack.pop();
+	  return (new Token(Token.CLOSE_PARAN,yytext()));
+	}
+	  
+	else if(((!checkForError("("))&&(!errorTrack.isEmpty()))||errorTrack.isEmpty())
+	{
+	   return new Token(Token.ERROR, ") has no matching ( in line" + " "+ yyline + "");
+	   
+	  
+	}
+
+	
+}
+
+<YYINITIAL> {OPEN_CURLY} {
+	errorTrack.push("{"); 
+	return (new Token(Token.OPEN_CURLY,yytext()));
+	}
+
+<YYINITIAL> {CLOSE_CURLY} { 
+
+	if(checkForError("{")&&(!errorTrack.isEmpty()))
+	{
+	  errorTrack.pop();
+	  return (new Token(Token.CLOSE_CURLY,yytext()));
+	}
+	  
+	else if(((!checkForError("{"))&&(!errorTrack.isEmpty()))||errorTrack.isEmpty())
+	{
+	   return new Token(Token.ERROR, "} has no matching { in line" + " "+ yyline + "");
+	   
+	  
+	}
+	
+}
+
+<YYINITIAL> {OPEN_SQUARE} { 
+	errorTrack.push("["); 
+	return (new Token(Token.OPEN_SQUARE,yytext()));
+}
+
+<YYINITIAL> {CLOSE_SQUARE} { 
+
+	if(checkForError("[")&&(!errorTrack.isEmpty()))
+	{
+	  errorTrack.pop();
+	  return (new Token(Token.CLOSE_SQUARE,yytext()));
+	}
+	  
+	else if(((!checkForError("["))&&(!errorTrack.isEmpty()))||errorTrack.isEmpty())
+	{
+	   return new Token(Token.ERROR, "] has no matching [ in line" + " "+ yyline + "");
+	   
+	  
+	}
+
+
+	}
+
 
 <YYINITIAL> . {
   return new Token(Token.ERROR, "Invalid input: " + yytext());

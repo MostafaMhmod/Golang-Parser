@@ -22,5 +22,5 @@ IDENTIFIER : sqrt
 OPEN_PARAN : (
 INT_LIT : 7
 CLOSE_PARAN : )
-CLOSE_CURLY : }
-EOF: Done
+ERROR: } has no matching { in line 8
+EOF: There is some (  that is not closed
