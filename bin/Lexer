@@ -65,7 +65,7 @@ class Lexer {
 
 NEWLINE=[\n]
 TAB=[\t]
-SPACE=[" "*]
+SPACE=[" "]*
 COMMENT=(//(.)*)
 PACKAGE=(package)
 IMPORT=(import)
@@ -103,9 +103,10 @@ STRUCT=(struct)
 TYPE=(type)
 FOR=(for)
 INT_LIT=([1-9][0-9]*)|0
-IDENTIFIERTEST=[(.)]*[^"(break|default|func|case|struct|else|package|switch|const|if|range|type|continue|for|import|return|var)"]
 IDENTIFIER=[A-Za-z_]*[0-9]*
-STRING_LIT=\"(.)*\"
+STRING_LIT1=\"[^\"\n]*(i\\)*\"
+STRING_LIT2=`[^`\n]*`
+STRING_LIT3=\"[^\n]*(i\\)+(\")+
 CDOTS=(\.\.\.)
 ASTRISK=(\*)
 BAR=(\|)
@@ -127,7 +128,7 @@ DECREMENT=(\-\-)
 	
 	else if (!errorTrack.isEmpty())
 	{
-	return (new Token(Token.EOF,"There is some "+ errorTrack.peek() +"  that is not closed"));
+	return (new Token(Token.EOF,"There is some "+ errorTrack.peek() +" that is not closed"));
 	}
 
 %eofval}
@@ -169,7 +170,9 @@ DECREMENT=(\-\-)
 <YYINITIAL> {FOR} { return (new Token(Token.FOR,yytext()));}
 <YYINITIAL> {INT_LIT} { return (new Token(Token.INT_LIT,yytext()));}
 <YYINITIAL> {IDENTIFIER} { return (new Token(Token.IDENTIFIER,yytext()));}
-<YYINITIAL> {STRING_LIT} { return (new Token(Token.STRING_LIT,yytext()));}
+<YYINITIAL> {STRING_LIT1} { return (new Token(Token.STRING_LIT,yytext()));}
+<YYINITIAL> {STRING_LIT2} { return (new Token(Token.STRING_LIT,yytext()));}
+<YYINITIAL> {STRING_LIT3} { return (new Token(Token.STRING_LIT,yytext()));}
 <YYINITIAL> {CDOTS} { return (new Token(Token.CDOTS,yytext()));}
 <YYINITIAL> {ASTRISK} { return (new Token(Token.ASTRISK,yytext()));}
 <YYINITIAL> {BAR} { return (new Token(Token.BAR,yytext()));}
@@ -180,48 +183,78 @@ DECREMENT=(\-\-)
 <YYINITIAL> {INCREMENT} { return (new Token(Token.INCREMENT,yytext()));}
 <YYINITIAL> {DECREMENT} { return (new Token(Token.DECREMENT,yytext()));}
 
+
+
 <YYINITIAL> {OPEN_PARAN} {
 	errorTrack.push("(");
 	return (new Token(Token.OPEN_PARAN,yytext()));
 }
 
+
+
+
 <YYINITIAL> {CLOSE_PARAN} { 
-	
+	int lineValue=yyline;
+	lineValue++;
+
 	if(checkForError("(")&&(!errorTrack.isEmpty()))
 	{
 	  errorTrack.pop();
 	  return (new Token(Token.CLOSE_PARAN,yytext()));
 	}
-	  
-	else if(((!checkForError("("))&&(!errorTrack.isEmpty()))||errorTrack.isEmpty())
+	
+	else if(((!errorTrack.isEmpty())&&(checkForError("(")==false)))
 	{
-	   return new Token(Token.ERROR, ") has no matching ( in line" + " "+ yyline + "");
-	   
+	   return new Token(Token.ERROR, ") has no matching ( in line" + " "+ lineValue + "");
 	  
 	}
+	  
+	else
+	{
 
+	   return new Token(Token.ERROR, "You have a missing bracket in line" + " "+ lineValue + "");
+
+	}
+	
+	
 	
 }
+
+
+
 
 <YYINITIAL> {OPEN_CURLY} {
 	errorTrack.push("{"); 
 	return (new Token(Token.OPEN_CURLY,yytext()));
 	}
 
-<YYINITIAL> {CLOSE_CURLY} { 
 
+
+<YYINITIAL> {CLOSE_CURLY} { 
+	int lineValue=yyline;
+	lineValue++;
+
+	
 	if(checkForError("{")&&(!errorTrack.isEmpty()))
 	{
 	  errorTrack.pop();
 	  return (new Token(Token.CLOSE_CURLY,yytext()));
 	}
-	  
-	else if(((!checkForError("{"))&&(!errorTrack.isEmpty()))||errorTrack.isEmpty())
+	if(checkForError("(")||checkForError("["))
 	{
-	   return new Token(Token.ERROR, "} has no matching { in line" + " "+ yyline + "");
-	   
+
+	   return new Token(Token.ERROR, "You have a missing bracket in line" + " "+ lineValue + "");
+
+	}
+	
+	else if(((!errorTrack.isEmpty())&&(checkForError("{")==false)))
+	{
+	   return new Token(Token.ERROR, "} has no matching { in line" + " "+ lineValue + "");
 	  
 	}
+	  
+
+
 	
 }
 
@@ -230,6 +263,8 @@ DECREMENT=(\-\-)
 	return (new Token(Token.OPEN_SQUARE,yytext()));
 }
 
+
+
 <YYINITIAL> {CLOSE_SQUARE} { 
 
 	if(checkForError("[")&&(!errorTrack.isEmpty()))
@@ -237,18 +272,29 @@ DECREMENT=(\-\-)
 	  errorTrack.pop();
 	  return (new Token(Token.CLOSE_SQUARE,yytext()));
 	}
-	  
-	else if(((!checkForError("["))&&(!errorTrack.isEmpty()))||errorTrack.isEmpty())
+	
+	else if(errorTrack.isEmpty())
 	{
 	   return new Token(Token.ERROR, "] has no matching [ in line" + " "+ yyline + "");
-	   
 	  
 	}
+	  
+	else if(((!checkForError("["))&&(!errorTrack.isEmpty())))
+	{
+
+	   return new Token(Token.ERROR, "You have a missing bracket in line" + " "+ yyline + "");
+
+	}
+
+
 
 
 	}
 
 
 <YYINITIAL> . {
-  return new Token(Token.ERROR, "Invalid input: " + yytext());
+	int lineValue=yyline;
+	lineValue++;
+
+  return new Token(Token.ERROR, "Invalid input: " + yytext() + " in line " + lineValue + "");
 }
