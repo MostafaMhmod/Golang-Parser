@@ -1,15 +1,336 @@
 import java.io.*;
+import java_cup.runtime.*;
 
 /*
 parser code {:
 :};*/
 	
 /* Terminals (tokens returned by the scanner). */
-terminal			
+terminal	
+	IDENTIFIER, BREAK, DEFAULT, FUNC, CASE, STRUCT, ELSE, PACKAGE, SWITCH, 
+	CONST, IF, TYPE, FOR, IMPORT, RETURN, VAR, OR_OP, AND_OP, REL_OP,
+	INT_LIT, PLUS, MINUS, STRING_LIT, OPEN_PARAN, CLOSE_PARAN, OPEN_CURLY,
+	CLOSE_CURLY, OPEN_SQUARE, CLOSE_SQUARE,	SEMI_COLON, COMMA, DOT, COLON,
+	COLON_EQUAL, EQUAL, CDOTS, ASTRISK, SHIFT_LEFT, SHIFT_RIGHT, BAR,SLASH,
+	EXCLAMATION, LESS_DASH, AMBERSAND, PERCENT, INCREMENT, DECREMENT;
+		
 
 /* Non-terminals */
-nonterminal	
+nonterminal	binary_op, add_op, mul_op, unary_op, type, typename, identifierlisthelper, 
+typelit, arraytype, arraylength, elementtype, slicetype,
+structtype, structtypehelper , fielddecl, anonymousfield , tag, functiontype, signature,
+signaturehelper,result	,parameters	, parametershelper, parameterlist,
+parameterdecl ,  methodname,block,statementlist,
+declaration,declarationhelper,
+topleveldecl,constdecl,constspec,constspechelper1,constspechelper2,
+identifierlist,expressionlist,
+expression,unaryexpr,typedecl,typedeclhelper,typespec,
+vardecl,vardecllhelper,varspec,varspechelper,
+shortvardecl,functiondecl,functionname,function,functionbody,methoddecl,
+receiver,operand,literal,compositelit,literaltype,literalvalue,elementlist,elementlisthelper,
+keyedelement,key,fieldname,element,basicLit,operandname,
+qualifiedIdent,functionlit,primaryexpr,selector,index,slice,slicehelper,
+arguments,methodexpr ,
+receivertype,statement,simplestmt ,expressionstmt,incdecstmt,assignment
+,assign_op,assign_ophelper,ifstmt,
+ifstmthelper2,switchstmt,exprswitchstmt,exprcaseclause
+,exprswitchcase,forstmt,forstmthelper,condition,forclause,forclausehelper1,
+forclausehelper2,forclausehelper3,initstmt,poststmt,returnstmt,returnstmthelper,breakstmt,
+packageclause,packagename,importspec,importdecl,importdeclhelper,importspechelper,
+importpath,sourcefile , sourcefilehelper1,sourcefilehelper2,parameterlisthelper, parameterdeclhelper,
+statementlisthelper,functiondeclhelper,constdeclhelper, literalvaluehelper, ExprSwitchStmthelper ;
+
+/* Precedences */
+
+precedence left OPEN_PARAN, COMMA;
+precedence left OR_OP, AND_OP, REL_OP;
+precedence left PLUS, MINUS, BAR;
+precedence left ASTRISK, SHIFT_LEFT, EXCLAMATION,PERCENT, INCREMENT, LESS_DASH, SHIFT_RIGHT,SLASH, AMBERSAND, DECREMENT;
 
 
 /* The grammar */
+
+sourcefile ::= packageclause declarationhelper sourcefilehelper1 sourcefilehelper2 ;
+sourcefilehelper1 ::= |importdecl declarationhelper sourcefilehelper1;
+sourcefilehelper2 ::= |topleveldecl sourcefilehelper2;
+
+binary_op ::=OR_OP|AND_OP|REL_OP|add_op|mul_op ;
+
+
+add_op ::= PLUS|MINUS|BAR;
+
+
+mul_op			 		::= ASTRISK|SLASH|PERCENT|SHIFT_LEFT|SHIFT_RIGHT|AMBERSAND;
+
+
+unary_op		 		::= PLUS|MINUS|EXCLAMATION|ASTRISK|AMBERSAND|LESS_DASH;
+
+type 			 		::= typename|typelit;
+
+
+typename		 		::= IDENTIFIER;
+
+
+typelit			 		::= arraytype|structtype|functiontype|slicetype;
+
+
+arraytype		 		::= OPEN_SQUARE arraylength CLOSE_SQUARE elementtype;
+
+arraylength		 		::= expression;
+
+
+elementtype		 		::= type;
+
+slicetype 		 		::= OPEN_SQUARE CLOSE_SQUARE elementtype;
+
+structtype 		 		::= STRUCT OPEN_CURLY structtypehelper CLOSE_CURLY;
+
+structtypehelper  ::= fielddecl SEMI_COLON structtypehelper | ;
+
+fielddecl 				::= identifierlist type | anonymousfield | identifierlist type tag | anonymousfield tag ;
+
+anonymousfield 	 		::= typename | ASTRISK typename;
+
+tag 			 		::= STRING_LIT;
+
+functiontype  	 		::= FUNC signature;
+
+signature		 		::= parameters signaturehelper;
+
+signaturehelper  		::= result | ;
+
+result			 		::= parameters | OPEN_PARAN type CLOSE_PARAN;
+
+parameters		 		::= OPEN_PARAN parametershelper CLOSE_PARAN;
+
+parametershelper 		::= parameterlist | ;
+
+parameterlist	 		::= parameterdecl parameterlisthelper;
+
+parameterlisthelper 	::= COMMA parameterdecl parameterlisthelper | ;
+
+
+parameterdecl 			::= identifierlist parameterdeclhelper type ;
+
+parameterdeclhelper 	::= |CDOTS;
+
+methodname				::= IDENTIFIER ;
+
+block 					::= OPEN_CURLY statementlist CLOSE_CURLY ;
+
+
+statementlist			::= statementlisthelper ;
+
+statementlisthelper 	::= statement statementlisthelper | ;
+
+declaration				::= constdecl SEMI_COLON | typedecl declarationhelper | vardecl SEMI_COLON ;
+
+declarationhelper 		::= |SEMI_COLON ;
+
+topleveldecl 			::= declaration | functiondecl declarationhelper | methoddecl declarationhelper ;
+
+constdecl				::= CONST constspec | CONST OPEN_PARAN constdeclhelper CLOSE_PARAN ;
+
+constdeclhelper ::= |constspec SEMI_COLON constdeclhelper ;
+
+constspec 				::= IDENTIFIER constspechelper1 ;
+
+constspechelper1 		::= |constspechelper2 EQUAL expression;
+
+constspechelper2 		::= |type;
+
+
+
+identifierlist 			::= IDENTIFIER identifierlisthelper ;
+
+identifierlisthelper ::= |COMMA IDENTIFIER identifierlisthelper;
+
+expressionlist			::= expression | expressionlist COMMA expression;
+
+expression				::= unaryexpr | expression binary_op expression ;
+
+
+unaryexpr				::= primaryexpr | unary_op unaryexpr ;
+
+
+typedecl 				::= TYPE typespec | TYPE OPEN_PARAN typedeclhelper CLOSE_PARAN ;
+
+
+typedeclhelper 			::= typespec SEMI_COLON typedeclhelper |  ;
+
+
+typespec 				::= IDENTIFIER type ;
+
+
+vardecl 				::= VAR varspec | VAR OPEN_PARAN vardecllhelper CLOSE_PARAN ;
+
+
+vardecllhelper 			::= |varspec SEMI_COLON vardecllhelper ;
+
+
+varspec					::= IDENTIFIER type varspechelper | IDENTIFIER EQUAL expression ;
+
+varspechelper 			::= |EQUAL expression;
+
+
+shortvardecl			::=  identifierlist COLON_EQUAL expression;
+
+
+functiondecl			::= FUNC functionname functiondeclhelper ;
+
+functiondeclhelper ::= function | signature;
+
+
+
+functionname			::= IDENTIFIER ;
+
+
+function				::= signature functionbody ;
+
+
+functionbody			::= block ;
+
+
+methoddecl				::= FUNC receiver methodname functiondeclhelper ;
+
+
+receiver				::= parameters ;
+
+
+operand					::= literal | operandname | methodexpr | OPEN_PARAN expression CLOSE_PARAN ;
+
+
+literal					::= basicLit | compositelit | functionlit ;
+
+
+compositelit			::= literaltype literalvalue ;
+
+
+literaltype  ::= structtype | arraytype | OPEN_SQUARE CDOTS CLOSE_SQUARE elementtype | slicetype | TYPE typename ;
+
+literalvalue			::= OPEN_CURLY literalvaluehelper CLOSE_CURLY ;
+
+
+literalvaluehelper  	::= |elementlist ;
+
+
+elementlist 	 		::= keyedelement elementlisthelper ;
+
+elementlisthelper		::=  |COMMA keyedelement elementlisthelper ;
+
+keyedelement 	 		::= element | key COLON element ;
+
+key 			 		::= fieldname | literalvalue ;
+ 
+fieldname 		 		::=  IDENTIFIER ;
+
+element 		 		::= expression | literalvalue ;
+
+basicLit 		 		::= INT_LIT | STRING_LIT ;
+
+operandname 	 		::= IDENTIFIER | qualifiedIdent ;
+
+
+qualifiedIdent   		::= DOT packagename DOT IDENTIFIER  ;
+
+functionlit 	 		::= FUNC function ;
+
+primaryexpr 	 		::= operand | primaryexpr selector | primaryexpr index 
+							| primaryexpr slice | primaryexpr arguments ;
+
+selector 		 		::= DOT IDENTIFIER  ;
+
+index 			 		::= OPEN_SQUARE expression CLOSE_SQUARE ;
+
+slice 			 		::= OPEN_SQUARE slicehelper COLON slicehelper CLOSE_SQUARE | OPEN_SQUARE 
+							 slicehelper COLON expression COLON expression CLOSE_SQUARE ;
+
+slicehelper 	 		::=  |expression ;
+
+
+arguments 		 		::= OPEN_PARAN  CLOSE_PARAN | OPEN_PARAN expressionlist CLOSE_PARAN | OPEN_PARAN TYPE type COMMA expressionlist CLOSE_PARAN  ;
+
+/**/
+
+methodexpr 		 		::= DOT receivertype DOT methodname ;
+
+receivertype  		 	::= OPEN_PARAN ASTRISK typename CLOSE_PARAN | OPEN_PARAN typename CLOSE_PARAN ;
+
+statement 		 		::= declaration | simplestmt SEMI_COLON | returnstmt SEMI_COLON | breakstmt SEMI_COLON 
+							 | block SEMI_COLON | block | ifstmt SEMI_COLON | ifstmt | switchstmt SEMI_COLON |
+							  switchstmt | forstmt SEMI_COLON | forstmt ;
+
+simplestmt 		 		::= expressionstmt | incdecstmt | assignment | shortvardecl ;
+
+expressionstmt 	 		::= expression  ;
+
+incdecstmt 		 		::= expression INCREMENT | expression DECREMENT  ;
+
+
+assignment 		 		::= expressionlist assign_op expressionlist ;
+
+assign_op 			 	::= assign_ophelper EQUAL  ;
+
+assign_ophelper		 	::= |add_op | mul_op;
+
+
+ifstmt 				 	::= IF simplestmt SEMI_COLON expression block  
+		|IF  expression block  | IF simplestmt SEMI_COLON expression block ifstmthelper2 
+		|IF  expression block ifstmthelper2 ;
+
+ifstmthelper2 		 	::= ELSE ifstmt | ELSE block  ;
+
+switchstmt  		 	::= exprswitchstmt  ;
+
+exprswitchstmt 		 	::= SWITCH simplestmt SEMI_COLON slicehelper OPEN_CURLY ExprSwitchStmthelper CLOSE_CURLY |
+ 							SWITCH slicehelper OPEN_CURLY ExprSwitchStmthelper CLOSE_CURLY;
+
+
+ExprSwitchStmthelper 	::= |exprcaseclause ExprSwitchStmthelper;
+
+exprcaseclause 		 	::= exprswitchcase COLON statementlist ;
+
+exprswitchcase 		 	::= CASE expressionlist | DEFAULT ;
+
+forstmt 			 	::= FOR forstmthelper block ;
+
+forstmthelper 		 	::= condition | forclause | ;
+
+condition 			 	::= expression ;
+
+forclause 			 	::= forclausehelper1 SEMI_COLON forclausehelper2 SEMI_COLON forclausehelper3   ;
+
+forclausehelper1 	 	::= |initstmt;
+forclausehelper2	 	::= |condition;
+forclausehelper3	 	::= |poststmt;
+
+initstmt			 	::= simplestmt ;
+poststmt			 	::= simplestmt ;
+
+
+
+returnstmt			 	::= RETURN returnstmthelper ;
+
+returnstmthelper 	 	::= |expressionlist;
+
+breakstmt			 	::= BREAK ;
+
+
+packageclause		 	::= PACKAGE packagename ;
+
+
+packagename 		 	::= IDENTIFIER ;
+
+
+importspec			 	::= importspechelper  importpath ;
+
+importspechelper	 	::= |DOT | packagename;
+
+importdecl			 	::= IMPORT importspec  | IMPORT  OPEN_PARAN importdeclhelper CLOSE_PARAN ;
+
+importdeclhelper 	 	::= |importspec declarationhelper importdeclhelper;
+
+
+importpath			 	::= STRING_LIT ;
+
 
