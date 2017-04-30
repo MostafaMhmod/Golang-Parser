@@ -8,7 +8,7 @@ public class AP {
 
 	public static void main(String[] args) {
 
-		String inFile = "MS2/Go6.in";
+		String inFile = "MS2/Go2.in";
 		String outFile = "MS2/Gotest.out";
 
 		if (args.length > 1) {
