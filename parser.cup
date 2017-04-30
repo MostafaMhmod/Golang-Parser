@@ -1,0 +1,862 @@
+import java.io.*;
+
+	
+/* Terminals (tokens returned by the scanner). */
+terminal			BREAK, DEFAULT, FUNC, CASE, STRUCT, ELSE, PACKAGE, SWITCH, CONST, IF, 
+					TYPE, FOR, IMPORT, RETURN, VAR, OR_OP, AND_OP, PLUS, MINUS, OPEN_PARAN, 
+					CLOSE_PARAN, OPEN_CURLY, CLOSE_CURLY, OPEN_SQUARE, CLOSE_SQUARE, 
+					SEMI_COLON, COMMA, DOT, COLON, COLON_EQUAL, EQUAL, CDOTS, ASTRISK, 
+					SHIFT_LEFT, SHIFT_RIGHT, BAR, SLASH, EXCLAMATION, LESS_DASH, AMBERSAND,
+					PERCENT, INCREMENT, DECREMENT;
+terminal	String	IDENTIFIER, REL_OP, STRING_LIT;	
+terminal	Integer	INT_LIT;
+
+/* Non-terminals */
+nonterminal	sourceFile, packageClause, importDecls, importDecl, topLevelDecls,
+					topLevelDecl, packageName, importSpecs, importSpec, importPath, 
+					optionalSemiColon, declaration, functionDecl, methodDecl, 
+					constDecl, typeDecl, varDecl, constSpecs, constSpec, identifierList, 
+					expressionList, expression, binaryOp, primaryExpr, 
+					unaryExpr, unaryOp, mulOp, addOp, operand, selector, index, slice, 
+					arguments, literal, operandName, methodExpr, basicLit, functionLit, 
+					qualifiedIdent, function, signature, functionBody, parameters, result, 
+					type, parameterList, parameterDecl, block, statementList, statement, 
+					typeName, typeLit, arrayType, structType, functionType, arrayLength, 
+					elementType, sliceType, fieldDecls, fieldDecl, anonymousField, tag, 
+					typeSpecs, typeSpec, varSpecs, varSpec, shortVarDecl, functionName, 
+					methodName, receiver, receiverType, simpleStmt, returnStmt, breakStmt, 
+					ifStmt, switchStmt, forStmt, expressionStmt, incDecStmt, assignment, 
+					assignOp, exprSwitchStmt, initStmt, postStmt, condition, forClause, 
+					exprCaseClauses, exprCaseClause, exprSwitchCase, compositeLit,
+					literalType, literalValue, elementList, keyedElement, key, fieldName,
+					element;
+
+
+precedence left OR_OP, AND_OP, REL_OP;
+precedence left PLUS, MINUS, BAR;
+precedence left ASTRISK, SLASH, SHIFT_LEFT, SHIFT_RIGHT, PERCENT, AMBERSAND;
+precedence left EXCLAMATION, LESS_DASH;
+precedence left OPEN_PARAN, CLOSE_PARAN;
+precedence left COMMA, SEMI_COLON;
+precedence left COLON;
+
+start with sourceFile;
+
+/* The grammar */
+sourceFile	::=	packageClause optionalSemiColon importDecls topLevelDecls
+				{:
+				:}
+				| packageClause optionalSemiColon importDecls
+				{:
+				:};
+
+topLevelDecls	::=	topLevelDecl topLevelDecls
+					{:
+					:}
+					| topLevelDecl
+					{:
+					:};
+
+topLevelDecl	::=	declaration 
+					{:
+					:}
+					| functionDecl optionalSemiColon
+					{:
+					:}
+					| methodDecl optionalSemiColon
+					{:
+					:};
+
+declaration	::=	constDecl SEMI_COLON
+				{:
+				:}
+				| typeDecl optionalSemiColon
+				{:
+				:}
+				| varDecl SEMI_COLON
+				{:
+				:};
+				
+constDecl	::=	CONST constSpec
+				{:
+				:}
+				| CONST OPEN_PARAN constSpecs CLOSE_PARAN
+				{:
+				:}
+				| CONST OPEN_PARAN CLOSE_PARAN
+				{:
+				:};
+
+
+constSpecs	::=	constSpec SEMI_COLON constSpecs
+				{:
+				:}
+				| constSpec SEMI_COLON
+				{:
+				:};
+
+constSpec	::=	IDENTIFIER
+				{:
+				:}
+				| IDENTIFIER EQUAL expression
+				{:
+				:}
+				| IDENTIFIER type EQUAL expression
+				{:
+				:};
+				
+				
+statement	::=	declaration
+				{:
+				:}
+				| simpleStmt SEMI_COLON
+				{:
+				:}
+				| returnStmt SEMI_COLON
+				{:
+				:}
+				| breakStmt SEMI_COLON
+				{:
+				:}
+				| block optionalSemiColon
+				{:
+				:}
+				| ifStmt optionalSemiColon
+				{:
+				:}
+				| switchStmt optionalSemiColon
+				{:
+				:}
+				| forStmt optionalSemiColon
+				{:
+				:};
+
+
+simpleStmt	::= expressionStmt
+				{:
+				:}
+				| incDecStmt
+				{:
+				:}
+				| assignment
+				{:
+				:}
+				| shortVarDecl
+				{:
+				:};
+
+
+expressionStmt	::= expression
+					{:
+					:};
+
+incDecStmt	::= expression INCREMENT
+				{:
+				:}
+				| expression DECREMENT
+				{:
+				:};
+
+assignment	::=	expressionList assignOp expressionList
+				{:
+				:};
+
+
+ifStmt	::=	IF expression block
+			{:
+			:}
+			| IF simpleStmt SEMI_COLON expression block
+			{:
+			:}
+			| IF expression block ELSE ifStmt
+			{:
+			:}
+			| IF expression block ELSE block
+			{:
+			:}
+			| IF simpleStmt SEMI_COLON expression block ELSE ifStmt
+			{:
+			:}
+			| IF simpleStmt SEMI_COLON expression block ELSE block
+			{:
+			:};
+
+
+switchStmt	::=	exprSwitchStmt
+				{:
+				:};
+
+
+exprSwitchStmt	::= SWITCH OPEN_CURLY exprCaseClauses CLOSE_CURLY
+					{:
+					:}
+					| SWITCH  simpleStmt SEMI_COLON OPEN_CURLY exprCaseClauses CLOSE_CURLY
+					{:
+					:}
+					| SWITCH expression OPEN_CURLY exprCaseClauses CLOSE_CURLY
+					{:
+					:}
+					| SWITCH simpleStmt SEMI_COLON expression OPEN_CURLY exprCaseClauses CLOSE_CURLY
+					{:
+					:};
+
+
+exprCaseClauses	::=	exprCaseClause exprCaseClauses
+					{:
+					:}
+					| 
+					{:
+					:};
+
+exprCaseClause	::= exprSwitchCase COLON statementList
+					{:
+					:};
+
+exprSwitchCase	::=	CASE expressionList
+					{:
+					:}
+					| DEFAULT
+					{:
+					:};
+
+
+forStmt	::=	FOR block
+			{:
+			:}
+			| FOR condition block
+			{:
+			:}
+			| FOR forClause block
+			{:
+			:};
+
+
+forClause	::=	initStmt SEMI_COLON condition SEMI_COLON postStmt
+				{:
+				:}
+				| SEMI_COLON condition SEMI_COLON postStmt
+				{:
+				:}
+				| initStmt SEMI_COLON SEMI_COLON postStmt
+				{:
+				:}
+				| initStmt SEMI_COLON condition optionalSemiColon
+				{:
+				:}
+				| SEMI_COLON SEMI_COLON postStmt
+				{:
+				:}
+				| SEMI_COLON condition optionalSemiColon
+				{:
+				:}
+				| initStmt SEMI_COLON optionalSemiColon
+				{:
+				:}
+				| SEMI_COLON optionalSemiColon
+				{:
+				:};
+
+
+condition	::=	expression
+				{:
+				:};
+
+initStmt	::=	simpleStmt
+				{:
+				:};
+
+
+postStmt	::=	simpleStmt
+				{:
+				:};
+
+
+returnStmt	::=	RETURN
+				{:
+				:}
+				| RETURN expressionList
+				{:
+				:};
+
+
+breakStmt	::=	BREAK
+				{:
+				:};
+
+
+
+identifierList	::=	IDENTIFIER
+					{:
+					:}
+					| IDENTIFIER COMMA identifierList
+					{:
+					:};
+
+expressionList	::=	expression
+					{:
+					:}
+					| expression COMMA expressionList
+					{:
+					:};
+
+
+expression	::=	unaryExpr
+				{:
+				:}
+				| expression binaryOp expression
+				{:
+				:};
+
+
+type	::= typeName
+			{:
+			:}
+			| typeLit
+			{:
+			:};
+
+
+typeName	::=	IDENTIFIER
+				{:
+				:};
+
+
+typeLit	::=	arrayType
+			{:
+			:}
+			| structType
+			{:
+			:}
+			| functionType
+			{:
+			:}
+			| sliceType
+			{:
+			:};
+			
+
+sliceType	::= OPEN_SQUARE CLOSE_SQUARE elementType
+				{:
+				:};
+
+arrayType	::=	OPEN_SQUARE arrayLength CLOSE_SQUARE elementType
+				{:
+				:};
+
+
+arrayLength	::= expression
+				{:
+				:};
+
+
+elementType	::=	type
+				{:
+				:};
+
+
+structType	::=	STRUCT OPEN_CURLY fieldDecls CLOSE_CURLY
+				{:
+				:};
+
+
+fieldDecls	::=	fieldDecl SEMI_COLON fieldDecls
+				{:
+				:}
+				| 
+				{:
+				:};
+
+
+fieldDecl	::= identifierList type
+				{:
+				:}
+				| identifierList type tag
+				{:
+				:}
+				| anonymousField
+				{:
+				:}
+				| anonymousField tag
+				{:
+				:};
+
+
+anonymousField	::=	typeName
+					{:
+					:}
+					| ASTRISK typeName
+					{:
+					:};
+
+
+tag	::= STRING_LIT
+		{:
+		:};
+
+
+
+functionType	::=	FUNC signature
+					{:
+					:};
+
+
+typeDecl	::=	TYPE typeSpec
+				{:
+				:}
+				| TYPE OPEN_PARAN typeSpecs CLOSE_PARAN
+				{:
+				:};
+
+typeSpecs	::=	typeSpec SEMI_COLON typeSpecs
+				{:
+				:}
+				| 
+				{:
+				:};
+
+
+typeSpec	::=	IDENTIFIER type
+				{:
+				:};
+
+
+
+varDecl	::=	VAR varSpec 
+			{:
+			:}
+			| VAR OPEN_PARAN varSpecs CLOSE_PARAN
+			{:
+			:};
+
+
+varSpecs	::= varSpec SEMI_COLON varSpecs
+				{:
+				:}
+				| 
+				{:
+				:};
+
+varSpec	::= IDENTIFIER EQUAL expression
+			{:
+			:}
+			| IDENTIFIER type
+			{:
+			:}
+			| IDENTIFIER type EQUAL expression
+			{:
+			:};
+			
+
+
+shortVarDecl	::= identifierList	COLON_EQUAL	expression
+					{:
+					:};
+
+
+functionDecl	::= FUNC functionName function
+					{:
+					:}
+					| FUNC functionName signature
+					{:
+					:};
+
+functionName	::= IDENTIFIER
+					{:
+					:};
+
+
+methodDecl	::= FUNC receiver methodName function
+				{:
+				:}
+				| FUNC receiver methodName signature
+				{:
+				:};
+
+receiver	::= parameters
+				{:
+				:};
+
+		
+methodName	::=	IDENTIFIER
+				{:
+				:};
+
+
+unaryExpr	::=	primaryExpr
+				{:
+				:}
+				| unaryOp unaryExpr
+				{:
+				:};
+
+primaryExpr	::=	operand
+				{:
+				:}
+				| primaryExpr selector
+				{:
+				:}
+				| primaryExpr index
+				{:
+				:}
+				| primaryExpr slice
+				{:
+				:}
+				| primaryExpr arguments
+				{:
+				:};
+
+
+
+selector	::= DOT IDENTIFIER
+				{:
+				:};
+
+index	::=	OPEN_SQUARE expression CLOSE_SQUARE
+			{:
+			:};
+
+slice	::=	OPEN_SQUARE COLON CLOSE_SQUARE
+			{:
+			:}
+			| OPEN_SQUARE expression COLON CLOSE_SQUARE
+			{:
+			:}
+			| OPEN_SQUARE COLON expression CLOSE_SQUARE
+			{:
+			:}
+			| OPEN_SQUARE expression COLON expression CLOSE_SQUARE
+			{:
+			:}
+			| OPEN_SQUARE COLON expression COLON expression CLOSE_SQUARE
+			{:
+			:}
+			| OPEN_SQUARE expression COLON expression COLON expression CLOSE_SQUARE
+			{:
+			:};
+
+
+arguments	::=	OPEN_PARAN CLOSE_PARAN
+				{:
+				:}
+				| OPEN_PARAN expressionList CLOSE_PARAN
+				{:
+				:}
+				| OPEN_PARAN TYPE type COMMA expressionList CLOSE_PARAN
+				{:
+				:};
+
+
+methodExpr	::=	DOT receiverType DOT methodName
+				{:
+				:};
+
+
+receiverType	::=	OPEN_PARAN ASTRISK typeName CLOSE_PARAN
+					{:
+					:}
+					| OPEN_PARAN typeName CLOSE_PARAN
+					{:
+					:};
+
+operand	::=	literal
+			{:
+			:}
+			| operandName
+			{:
+			:}
+			| methodExpr
+			{:
+			:}
+			| OPEN_PARAN expression CLOSE_PARAN
+			{:
+			:};
+
+literal	::=	basicLit
+			{:
+			:}
+			| functionLit
+			{:
+			:}
+			| compositeLit
+			{:
+			:};
+
+
+compositeLit	::=	literalType literalValue
+					{:
+					:};
+
+literalType	::=	structType
+				{:
+				:}
+				| arrayType
+				{:
+				:}
+				| sliceType
+				{:
+				:}
+				| TYPE typeName
+				{:
+				:}
+				| OPEN_SQUARE CDOTS CLOSE_SQUARE elementType
+				{:
+				:};
+
+
+literalValue	::=	OPEN_CURLY CLOSE_CURLY
+					{:
+					:}
+					| OPEN_CURLY elementList CLOSE_CURLY
+					{:
+					:};
+
+
+elementList	::=	keyedElement
+				{:
+				:}
+				| keyedElement COMMA elementList
+				{:
+				:};
+
+
+keyedElement	::=	element
+					{:
+					:}
+					| key COLON element
+					{:
+					:};
+
+
+key	::=	fieldName
+		{:
+		:}
+		| literalValue
+		{:
+		:};
+
+fieldName	::= IDENTIFIER
+				{:
+				:};
+
+
+element	::= expression
+			{:
+			:}
+			| literalValue
+			{:
+			:};
+
+basicLit	::=	INT_LIT
+				{:
+				:}
+				| STRING_LIT 
+				{:
+				:};
+
+operandName	::=	IDENTIFIER
+				{:
+				:}
+				| qualifiedIdent
+				{:
+				:};
+
+
+qualifiedIdent	::=	DOT packageName DOT IDENTIFIER
+					{:
+					:};
+					
+					
+functionLit	::=	FUNC function
+				{:
+				:};
+
+
+function	::=	signature functionBody
+				{:
+				:};
+
+signature	::=	parameters
+				{:
+				:}
+				| parameters result
+				{:
+				:};
+
+
+result	::=	parameters
+			{:
+			:}
+			| OPEN_PARAN type CLOSE_PARAN
+			{:
+			:};
+
+parameters	::=	OPEN_PARAN CLOSE_PARAN
+				{:
+				:}
+				| OPEN_PARAN parameterList CLOSE_PARAN
+				{:
+				:}; 
+
+
+parameterList	::=	parameterDecl
+					{:
+					:}
+					| parameterDecl COMMA parameterList
+					{:
+					:};
+
+
+parameterDecl	::= identifierList type
+					{:
+					:}
+					| identifierList CDOTS type
+					{:
+					:};
+
+functionBody	::= block
+					{:
+					:};
+
+
+block	::= OPEN_CURLY statementList CLOSE_CURLY
+			{:
+			:};
+
+
+statementList	::=	statement statementList
+					{:
+					:}
+					| 
+					{:
+					:};
+
+packageClause	::=	PACKAGE packageName
+					{:
+					:};
+
+
+importDecls	::=	importDecl optionalSemiColon importDecls
+				{:
+				:}
+				|
+				{:
+				:};
+
+importDecl	::=	IMPORT	importSpec
+				{:
+				:}
+				| IMPORT OPEN_PARAN importSpecs CLOSE_PARAN
+				{:
+				:};
+
+importSpecs	::=	importSpec optionalSemiColon importSpecs
+				{:
+				:}
+				| 
+				{:
+				:};
+
+importSpec	::=	importPath
+				{:
+				:}
+				| DOT importPath
+				{:
+				:}
+				| packageName importPath
+				{:
+				:};
+				
+importPath	::=	STRING_LIT
+				{:
+				:};
+
+packageName	::=	IDENTIFIER
+				{:
+				:};
+
+
+optionalSemiColon	::=	SEMI_COLON
+						{:
+						:}
+						| 
+						{:
+						:};
+
+
+assignOp	::=	addOp EQUAL 
+				{:
+				:} %prec EQUAL
+				| mulOp EQUAL
+				{:
+				:} %prec EQUAL
+				| EQUAL
+				{:
+				:};
+
+
+binaryOp	::= OR_OP
+				{:
+				:}
+				| AND_OP
+				{:
+				:}
+				| REL_OP
+				{:
+				:}
+				| addOp
+				{:
+				:}
+				| mulOp
+				{:
+				:};
+
+addOp	::=	PLUS
+			{:
+			:}
+			| MINUS
+			{:
+			:}
+			| BAR
+			{:
+			:};
+
+
+mulOp	::=	ASTRISK
+			{:
+			:}
+			| SLASH
+			{:
+			:}
+			| SHIFT_LEFT
+			{:
+			:}
+			| SHIFT_RIGHT
+			{:
+			:}
+			| PERCENT
+			{:
+			:}
+			| AMBERSAND
+			{:
+			:};
+
+
+unaryOp	::=	PLUS
+			{:
+			:}
+			| MINUS
+			{:
+			:}
+			| EXCLAMATION
+			{:
+			:}
+			| ASTRISK
+			{:
+			:}
+			| AMBERSAND
+			{:
+			:}
+			| LESS_DASH
+			{:
+			:};						
+						
