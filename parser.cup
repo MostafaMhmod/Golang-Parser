@@ -12,7 +12,7 @@ terminal	String	IDENTIFIER, REL_OP, STRING_LIT;
 terminal	Integer	INT_LIT;
 
 /* Non-terminals */
-nonterminal	sourceFile, packageClause, importDecls, importDecl, topLevelDecls,
+nonterminal String	sourceFile, packageClause, importDecls, importDecl, topLevelDecls,
 					topLevelDecl, packageName, importSpecs, importSpec, importPath, 
 					optionalSemiColon, declaration, functionDecl, methodDecl, 
 					constDecl, typeDecl, varDecl, constSpecs, constSpec, identifierList, 
@@ -730,8 +730,9 @@ statementList	::=	statement statementList
 					{:
 					:};
 
-packageClause	::=	PACKAGE packageName
+packageClause	::=	PACKAGE packageName:a
 					{:
+					RESULT = "package" + a;
 					:};
 
 

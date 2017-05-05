@@ -1,9 +1,0 @@
-package	main
-import	(
-"fmt"
-"math"
-)
-
-func main()	{
-	fmt.println("now you have %g problems.",math.sqrt(7)
-}
