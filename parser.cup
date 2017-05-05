@@ -16,8 +16,8 @@ nonterminal String	sourceFile, packageClause, importDecls, importDecl, topLevelD
 					topLevelDecl, packageName, importSpecs, importSpec, importPath, 
 					optionalSemiColon, declaration, functionDecl, methodDecl, 
 					constDecl, typeDecl, varDecl, constSpecs, constSpec, identifierList, 
-					expressionList, expression, binaryOp, primaryExpr, 
-					unaryExpr, unaryOp, mulOp, addOp, operand, selector, index, slice, 
+					expressionList, binaryOp, primaryExpr, 
+					unaryExpr, mulOp, addOp, operand, selector, index, slice, 
 					arguments, literal, operandName, methodExpr, basicLit, functionLit, 
 					qualifiedIdent, function, signature, functionBody, parameters, result, 
 					type, parameterList, parameterDecl, block, statementList, statement, 
@@ -30,7 +30,13 @@ nonterminal String	sourceFile, packageClause, importDecls, importDecl, topLevelD
 					exprCaseClauses, exprCaseClause, exprSwitchCase, compositeLit,
 					literalType, literalValue, elementList, keyedElement, key, fieldName,
 					element;
-
+nonterminal Express expression  ;
+/*precedence left COMMA;
+precedence left OR_OP;
+precedence left AND_OP;
+precedence left REL_OP;
+precedence left PLUS, MINUS, BAR;
+precedence left ASTRISK, SLASH, PERCENT, SHIFT_LEFT, SHIFT_RIGHT, AMBERSAND;*/
 
 precedence left OR_OP, AND_OP, REL_OP;
 precedence left PLUS, MINUS, BAR;
@@ -43,821 +49,1115 @@ precedence left COLON;
 start with sourceFile;
 
 /* The grammar */
-sourceFile	::=	packageClause optionalSemiColon importDecls topLevelDecls
+sourceFile	::=	packageClause:a optionalSemiColon:b importDecls:c topLevelDecls:d
 				{:
+				RESULT = a+b+c+d;
 				:}
-				| packageClause optionalSemiColon importDecls
+				| packageClause:a optionalSemiColon:b importDecls:c
 				{:
+				RESULT = a+b+c;
 				:};
 
 topLevelDecls	::=	topLevelDecl topLevelDecls
 					{:
+					RESULT = "";
 					:}
 					| topLevelDecl
 					{:
+					RESULT = "";
 					:};
 
-topLevelDecl	::=	declaration 
+topLevelDecl	::=	declaration:d 
 					{:
+					RESULT = d;
 					:}
-					| functionDecl optionalSemiColon
+					| functionDecl:d optionalSemiColon:o
 					{:
+					RESULT = d+o;
 					:}
-					| methodDecl optionalSemiColon
+					| methodDecl:m optionalSemiColon:o
 					{:
+					RESULT = m+o;
 					:};
 
-declaration	::=	constDecl SEMI_COLON
+declaration	::=	constDecl:c SEMI_COLON
 				{:
+				RESULT = c+";";
 				:}
-				| typeDecl optionalSemiColon
+				| varDecl:v SEMI_COLON
 				{:
-				:}
-				| varDecl SEMI_COLON
-				{:
+				RESULT = v+";";
 				:};
 				
-constDecl	::=	CONST constSpec
+constDecl	::=	CONST constSpec:c
 				{:
+				RESULT = c;
 				:}
-				| CONST OPEN_PARAN constSpecs CLOSE_PARAN
+				| CONST OPEN_PARAN constSpecs:c CLOSE_PARAN
 				{:
+				RESULT = "("+c+")";
 				:}
 				| CONST OPEN_PARAN CLOSE_PARAN
 				{:
+				RESULT = "("+")";
 				:};
 
 
 constSpecs	::=	constSpec SEMI_COLON constSpecs
 				{:
+				RESULT = "";
 				:}
 				| constSpec SEMI_COLON
 				{:
+				RESULT = "";
 				:};
-
-constSpec	::=	IDENTIFIER
+//ba3deen-----------------------------------------
+constSpec	::=	IDENTIFIER:i
 				{:
+				RESULT = i;
 				:}
-				| IDENTIFIER EQUAL expression
+				| IDENTIFIER:i EQUAL:q expression:e
 				{:
+				RESULT = "";
 				:}
 				| IDENTIFIER type EQUAL expression
 				{:
+				RESULT = "";
 				:};
 				
 				
 statement	::=	declaration
 				{:
+				RESULT = "";
 				:}
 				| simpleStmt SEMI_COLON
 				{:
+				RESULT = "";
 				:}
 				| returnStmt SEMI_COLON
 				{:
+				RESULT = "";
 				:}
 				| breakStmt SEMI_COLON
 				{:
+				RESULT = "";
 				:}
 				| block optionalSemiColon
 				{:
+				RESULT = "";
 				:}
 				| ifStmt optionalSemiColon
 				{:
+				RESULT = "";
 				:}
 				| switchStmt optionalSemiColon
 				{:
+				RESULT = "";
 				:}
 				| forStmt optionalSemiColon
 				{:
+				RESULT = "";
 				:};
 
 
 simpleStmt	::= expressionStmt
 				{:
+				RESULT = "";
 				:}
 				| incDecStmt
 				{:
+				RESULT = "";
 				:}
 				| assignment
 				{:
+				RESULT = "";
 				:}
 				| shortVarDecl
 				{:
+				RESULT = "";
 				:};
 
 
 expressionStmt	::= expression
 					{:
+					RESULT = "";
 					:};
 
 incDecStmt	::= expression INCREMENT
 				{:
+				RESULT = "";
 				:}
 				| expression DECREMENT
 				{:
+				RESULT = "";
 				:};
 
 assignment	::=	expressionList assignOp expressionList
 				{:
+				RESULT = "";
 				:};
 
 
 ifStmt	::=	IF expression block
 			{:
+			RESULT = "";
 			:}
 			| IF simpleStmt SEMI_COLON expression block
 			{:
+			RESULT = "";
 			:}
 			| IF expression block ELSE ifStmt
 			{:
+			RESULT = "";
 			:}
 			| IF expression block ELSE block
 			{:
+			RESULT = "";
 			:}
 			| IF simpleStmt SEMI_COLON expression block ELSE ifStmt
 			{:
+			RESULT = "";
 			:}
 			| IF simpleStmt SEMI_COLON expression block ELSE block
 			{:
+			RESULT = "";
 			:};
 
 
 switchStmt	::=	exprSwitchStmt
 				{:
+				RESULT = "";
 				:};
 
 
 exprSwitchStmt	::= SWITCH OPEN_CURLY exprCaseClauses CLOSE_CURLY
 					{:
+					RESULT = "";
 					:}
 					| SWITCH  simpleStmt SEMI_COLON OPEN_CURLY exprCaseClauses CLOSE_CURLY
 					{:
+					RESULT = "";
 					:}
 					| SWITCH expression OPEN_CURLY exprCaseClauses CLOSE_CURLY
 					{:
+					RESULT = "";
 					:}
 					| SWITCH simpleStmt SEMI_COLON expression OPEN_CURLY exprCaseClauses CLOSE_CURLY
 					{:
+					RESULT = "";
 					:};
 
 
 exprCaseClauses	::=	exprCaseClause exprCaseClauses
 					{:
+					RESULT = "";
 					:}
 					| 
 					{:
+					RESULT = "";
 					:};
 
 exprCaseClause	::= exprSwitchCase COLON statementList
 					{:
+					RESULT = "";
 					:};
 
 exprSwitchCase	::=	CASE expressionList
 					{:
+					RESULT = "";
 					:}
 					| DEFAULT
 					{:
+					RESULT = "";
 					:};
 
 
 forStmt	::=	FOR block
 			{:
+			RESULT = "";
 			:}
 			| FOR condition block
 			{:
+			RESULT = "";
 			:}
 			| FOR forClause block
 			{:
+			RESULT = "";
 			:};
 
 
 forClause	::=	initStmt SEMI_COLON condition SEMI_COLON postStmt
 				{:
+				RESULT = "";
 				:}
 				| SEMI_COLON condition SEMI_COLON postStmt
 				{:
+				RESULT = "";
 				:}
 				| initStmt SEMI_COLON SEMI_COLON postStmt
 				{:
+				RESULT = "";
 				:}
 				| initStmt SEMI_COLON condition optionalSemiColon
 				{:
+				RESULT = "";
 				:}
 				| SEMI_COLON SEMI_COLON postStmt
 				{:
+				RESULT = "";
 				:}
 				| SEMI_COLON condition optionalSemiColon
 				{:
+				RESULT = "";
 				:}
 				| initStmt SEMI_COLON optionalSemiColon
 				{:
+				RESULT = "";
 				:}
 				| SEMI_COLON optionalSemiColon
 				{:
+				RESULT = "";
 				:};
 
 
 condition	::=	expression
 				{:
+				RESULT = "";
 				:};
 
 initStmt	::=	simpleStmt
 				{:
+				RESULT = "";
 				:};
 
 
 postStmt	::=	simpleStmt
 				{:
+				RESULT = "";
 				:};
 
 
 returnStmt	::=	RETURN
 				{:
+				RESULT = "";
 				:}
 				| RETURN expressionList
 				{:
+				RESULT = "";
 				:};
 
 
 breakStmt	::=	BREAK
 				{:
+				RESULT = "";
 				:};
 
 
 
-identifierList	::=	IDENTIFIER
+identifierList	::=	IDENTIFIER:i
 					{:
+					RESULT = i;
 					:}
-					| IDENTIFIER COMMA identifierList
+					| IDENTIFIER:i COMMA:c identifierList:l
 					{:
+					RESULT = i+c+l;
 					:};
 
+//ba3deen-------------------------------------------
 expressionList	::=	expression
 					{:
+					RESULT = "";
 					:}
 					| expression COMMA expressionList
 					{:
+					RESULT = "";
 					:};
 
 
-expression	::=	unaryExpr
+expression	::=	unaryExpr:u
 				{:
+				RESULT  =  new Express();
+				// RESULT.code  = u ;
+				Express x  =  new Express();
+				x.setCode(u);
+				RESULT=x;
 				:}
-				| expression binaryOp expression
+				| expression:a REL_OP:r expression:b
 				{:
+				// RESULT= new Express(a,r,b);
+				RESULT  =  new Express();
+				RESULT.code = a.code+""+b.code+RESULT.address+"="+a.address + r + b.address;
+				RESULT.address = Express.Temp();
+				:}
+				| expression:a OR_OP expression:b
+				{:
+				// RESULT= new Express(a,"||",b);
+				RESULT  =  new Express();
+				RESULT.code = a.code+""+b.code+RESULT.address+"="+a.address+"||"+b.address;
+				RESULT.address = Express.Temp();
+
+				:}
+				| expression:a AND_OP expression:b
+				{:
+				// RESULT= new Express(a,"&&",b);
+				RESULT  =  new Express();
+				RESULT.code = a.code+""+b.code+RESULT.address+"="+a.address+"&&"+b.address;
+				RESULT.address = Express.Temp();
+
+				:}
+
+				| expression:a PLUS expression:b
+				{:
+				// RESULT= new Express(a,"+",b);
+				RESULT  =  new Express();
+				RESULT.code = a.code+""+b.code+RESULT.address+"="+a.address+"+"+b.address;
+				RESULT.address = Express.Temp();
+
+				:}
+				| expression:a MINUS expression:b
+				{:
+				// RESULT= new Express(a,"-",b);
+				RESULT  =  new Express();
+				RESULT.code = a.code+""+b.code+RESULT.address+"="+a.address+"-"+b.address;
+				RESULT.address = Express.Temp();
+
+				:}
+				| expression:a ASTRISK expression:b
+				{:
+				// RESULT= new Express(a,"*",b);
+				RESULT  =  new Express();
+				RESULT.code = a.code+""+b.code+RESULT.address+"="+a.address+"*"+b.address;
+				RESULT.address = Express.Temp();
+
+				:}
+				| expression:a SLASH expression:b
+				{:
+				// RESULT= new Express(a,"/",b);
+				RESULT  =  new Express();
+				RESULT.code = a.code+""+b.code+RESULT.address+"="+a.address+"/"+b.address;
+				RESULT.address = Express.Temp();
+
+				:}
+				| expression:a PERCENT expression:b
+				{:
+				// RESULT= new Express(a,"%",b);
+				RESULT  =  new Express();
+				RESULT.code = a.code+""+b.code+RESULT.address+"="+a.address+"%"+b.address;
+				RESULT.address = Express.Temp();
+
+				:}
+				| expression:a SHIFT_LEFT expression:b
+				{:
+				// RESULT= new Express(a,"<<",b);
+				RESULT  =  new Express();
+				RESULT.code = a.code+""+b.code+RESULT.address+"="+a.address+"<<"+b.address;
+				RESULT.address = Express.Temp();
+
+				:}
+				| expression:a SHIFT_RIGHT expression:b
+				{:
+				// RESULT= new Express(a,">>",b);
+				RESULT  =  new Express();
+				RESULT.code = a.code+""+b.code+RESULT.address+"="+a.address+">>"+b.address;
+				RESULT.address = Express.Temp();
+
+				:}
+				
+				| expression:a AMBERSAND expression:b
+				{:
+				// RESULT= new Express(a,"&",b);
+				RESULT  =  new Express();
+				RESULT.code = a.code+""+b.code+RESULT.address+"="+a.address+"&"+b.address;
+				RESULT.address = Express.Temp();
+
+				:}
+				| expression:a EXCLAMATION expression:b
+				{:
+				// RESULT= new Express(a,"!",b);
+				RESULT  =  new Express();
+				RESULT.code = a.code+""+b.code+RESULT.address+"="+a.address+"!"+b.address;
+				RESULT.address = Express.Temp();
+
 				:};
 
 
-type	::= typeName
+
+type	::= typeName:a
 			{:
+			RESULT = a;
 			:}
-			| typeLit
+			| typeLit:b
 			{:
+			RESULT = b;
 			:};
 
 
-typeName	::=	IDENTIFIER
+typeName	::=	IDENTIFIER:a
 				{:
+				RESULT = a;
 				:};
 
 
-typeLit	::=	arrayType
+typeLit	::=	functionType:f
 			{:
-			:}
-			| structType
-			{:
-			:}
-			| functionType
-			{:
-			:}
-			| sliceType
-			{:
+			RESULT = f;
 			:};
+			
 			
 
 sliceType	::= OPEN_SQUARE CLOSE_SQUARE elementType
 				{:
+				RESULT = "";
 				:};
 
 arrayType	::=	OPEN_SQUARE arrayLength CLOSE_SQUARE elementType
 				{:
+				RESULT = "";
 				:};
 
 
 arrayLength	::= expression
 				{:
+				RESULT = "";
 				:};
 
 
 elementType	::=	type
 				{:
+				RESULT = "";
 				:};
 
 
 structType	::=	STRUCT OPEN_CURLY fieldDecls CLOSE_CURLY
 				{:
+				RESULT = "";
 				:};
 
 
 fieldDecls	::=	fieldDecl SEMI_COLON fieldDecls
 				{:
+				RESULT = "";
 				:}
 				| 
 				{:
+				RESULT = "";
 				:};
 
 
 fieldDecl	::= identifierList type
 				{:
+				RESULT = "";
 				:}
 				| identifierList type tag
 				{:
+				RESULT = "";
 				:}
 				| anonymousField
 				{:
+				RESULT = "";
 				:}
 				| anonymousField tag
 				{:
+				RESULT = "";
 				:};
 
 
 anonymousField	::=	typeName
 					{:
+					RESULT = "";
 					:}
 					| ASTRISK typeName
 					{:
+					RESULT = "";
 					:};
 
 
 tag	::= STRING_LIT
 		{:
+		RESULT = "";
 		:};
 
 
 
-functionType	::=	FUNC signature
+functionType	::=	FUNC signature:s
 					{:
+					RESULT = s;
 					:};
 
 
 typeDecl	::=	TYPE typeSpec
 				{:
+				RESULT = "";
 				:}
 				| TYPE OPEN_PARAN typeSpecs CLOSE_PARAN
 				{:
+				RESULT = "";
 				:};
 
 typeSpecs	::=	typeSpec SEMI_COLON typeSpecs
 				{:
+				RESULT = "";
 				:}
 				| 
 				{:
+				RESULT = "";
 				:};
 
 
 typeSpec	::=	IDENTIFIER type
 				{:
+				RESULT = "";
 				:};
 
 
 
-varDecl	::=	VAR varSpec 
+varDecl	::=	VAR varSpec:v 
 			{:
+			RESULT = v;
 			:}
-			| VAR OPEN_PARAN varSpecs CLOSE_PARAN
+			| VAR OPEN_PARAN varSpecs:v CLOSE_PARAN
 			{:
+			RESULT = v;
 			:};
 
 
 varSpecs	::= varSpec SEMI_COLON varSpecs
 				{:
+				RESULT = "";
 				:}
 				| 
 				{:
+				RESULT = "";
 				:};
 
-varSpec	::= IDENTIFIER EQUAL expression
+//ba3deen -------------------------------
+varSpec	::= IDENTIFIER:i EQUAL expression:e
 			{:
+			RESULT = "";
 			:}
 			| IDENTIFIER type
 			{:
+			RESULT = "";
 			:}
 			| IDENTIFIER type EQUAL expression
 			{:
+			RESULT = "";
 			:};
 			
 
 
 shortVarDecl	::= identifierList	COLON_EQUAL	expression
 					{:
+					RESULT = "";
 					:};
 
 
 functionDecl	::= FUNC functionName function
 					{:
+					RESULT = "";
 					:}
 					| FUNC functionName signature
 					{:
+					RESULT = "";
 					:};
 
 functionName	::= IDENTIFIER
 					{:
+					RESULT = "";
 					:};
 
 
 methodDecl	::= FUNC receiver methodName function
 				{:
+				RESULT = "";
 				:}
 				| FUNC receiver methodName signature
 				{:
+				RESULT = "";
 				:};
 
 receiver	::= parameters
 				{:
+				RESULT = "";
 				:};
 
 		
-methodName	::=	IDENTIFIER
+methodName	::=	IDENTIFIER:i
 				{:
+				RESULT = i;
 				:};
 
-
-unaryExpr	::=	primaryExpr
+// E:addr = new Temp()
+// E:code = E1:code ◦ gen(E:addr = minus E1:addr)
+unaryExpr	::=	primaryExpr:s
 				{:
+				RESULT=s;
 				:}
-				| unaryOp unaryExpr
+				| MINUS unaryExpr:b
 				{:
+				// RESULT  =  new Express();
+				// RESULT.address = Express.Temp();
+				// RESULT.code = b.code+""+RESULT.address+"="+"-"+b.address;
+				// RESULT ="kkk";
+				:}
+				| EXCLAMATION unaryExpr
+				{:
+				RESULT ="kkk";
+				:}
+				| ASTRISK unaryExpr
+				{:
+				RESULT ="kkk";
+				:}
+				| AMBERSAND unaryExpr
+				{:
+				RESULT ="kkk";
+				:}
+				| LESS_DASH unaryExpr
+				{:
+				RESULT ="kkk";
 				:};
 
 primaryExpr	::=	operand
 				{:
+				RESULT = "";
 				:}
 				| primaryExpr selector
 				{:
+				RESULT = "";
 				:}
 				| primaryExpr index
 				{:
+				RESULT = "";
 				:}
 				| primaryExpr slice
 				{:
+				RESULT = "";
 				:}
 				| primaryExpr arguments
 				{:
+				RESULT = "";
 				:};
 
 
 
 selector	::= DOT IDENTIFIER
 				{:
+				RESULT = "";
 				:};
 
 index	::=	OPEN_SQUARE expression CLOSE_SQUARE
 			{:
+			RESULT = "";
 			:};
 
 slice	::=	OPEN_SQUARE COLON CLOSE_SQUARE
 			{:
+			RESULT = "";
 			:}
 			| OPEN_SQUARE expression COLON CLOSE_SQUARE
 			{:
+			RESULT = "";
 			:}
 			| OPEN_SQUARE COLON expression CLOSE_SQUARE
 			{:
+			RESULT = "";
 			:}
 			| OPEN_SQUARE expression COLON expression CLOSE_SQUARE
 			{:
+			RESULT = "";
 			:}
 			| OPEN_SQUARE COLON expression COLON expression CLOSE_SQUARE
 			{:
+			RESULT = "";
 			:}
 			| OPEN_SQUARE expression COLON expression COLON expression CLOSE_SQUARE
 			{:
+			RESULT = "";
 			:};
 
 
 arguments	::=	OPEN_PARAN CLOSE_PARAN
 				{:
+				RESULT = "";
 				:}
 				| OPEN_PARAN expressionList CLOSE_PARAN
 				{:
+				RESULT = "";
 				:}
 				| OPEN_PARAN TYPE type COMMA expressionList CLOSE_PARAN
 				{:
+				RESULT = "";
 				:};
 
 
 methodExpr	::=	DOT receiverType DOT methodName
 				{:
+				RESULT = "";
 				:};
 
 
 receiverType	::=	OPEN_PARAN ASTRISK typeName CLOSE_PARAN
 					{:
+					RESULT = "";
 					:}
 					| OPEN_PARAN typeName CLOSE_PARAN
 					{:
+					RESULT = "";
 					:};
 
 operand	::=	literal
 			{:
+			RESULT = "";
 			:}
 			| operandName
 			{:
+			RESULT = "";
 			:}
 			| methodExpr
 			{:
+			RESULT = "";
 			:}
 			| OPEN_PARAN expression CLOSE_PARAN
 			{:
+			RESULT = "";
 			:};
 
 literal	::=	basicLit
 			{:
+			RESULT = "";
 			:}
 			| functionLit
 			{:
+			RESULT = "";
 			:}
 			| compositeLit
 			{:
+			RESULT = "";
 			:};
 
 
 compositeLit	::=	literalType literalValue
 					{:
+					RESULT = "";
 					:};
 
 literalType	::=	structType
 				{:
+				RESULT = "";
 				:}
 				| arrayType
 				{:
+				RESULT = "";
 				:}
 				| sliceType
 				{:
+				RESULT = "";
 				:}
 				| TYPE typeName
 				{:
+				RESULT = "";
 				:}
 				| OPEN_SQUARE CDOTS CLOSE_SQUARE elementType
 				{:
+				RESULT = "";
 				:};
 
 
 literalValue	::=	OPEN_CURLY CLOSE_CURLY
 					{:
+					RESULT = "";
 					:}
 					| OPEN_CURLY elementList CLOSE_CURLY
 					{:
+					RESULT = "";
 					:};
 
 
 elementList	::=	keyedElement
 				{:
+				RESULT = "";
 				:}
 				| keyedElement COMMA elementList
 				{:
+				RESULT = "";
 				:};
 
 
 keyedElement	::=	element
 					{:
+					RESULT = "";
 					:}
 					| key COLON element
 					{:
+					RESULT = "";
 					:};
 
 
 key	::=	fieldName
 		{:
+		RESULT = "";
 		:}
 		| literalValue
 		{:
+		RESULT = "";
 		:};
 
 fieldName	::= IDENTIFIER
 				{:
+				RESULT = "";
 				:};
 
 
 element	::= expression
 			{:
+			RESULT = "";
 			:}
 			| literalValue
 			{:
+			RESULT = "";
 			:};
 
 basicLit	::=	INT_LIT
 				{:
+				RESULT = "";
 				:}
 				| STRING_LIT 
 				{:
+				RESULT = "";
 				:};
 
 operandName	::=	IDENTIFIER
 				{:
+				RESULT = "";
 				:}
 				| qualifiedIdent
 				{:
+				RESULT = "";
 				:};
 
 
 qualifiedIdent	::=	DOT packageName DOT IDENTIFIER
 					{:
+					RESULT = "";
 					:};
 					
 					
 functionLit	::=	FUNC function
 				{:
+				RESULT = "";
 				:};
 
 
 function	::=	signature functionBody
 				{:
+				RESULT = "";
 				:};
 
-signature	::=	parameters
+signature	::=	parameters:p
 				{:
+				RESULT = p;
 				:}
-				| parameters result
+				| parameters:p result:r
 				{:
+				RESULT = p+r;
 				:};
 
-
-result	::=	parameters
+result	::=	parameters:s
 			{:
+			RESULT = s;
 			:}
-			| OPEN_PARAN type CLOSE_PARAN
+			| OPEN_PARAN type:b CLOSE_PARAN
 			{:
+			RESULT = "(" + b + ")";
 			:};
 
 parameters	::=	OPEN_PARAN CLOSE_PARAN
 				{:
+				RESULT = "("+")";
 				:}
-				| OPEN_PARAN parameterList CLOSE_PARAN
+				| OPEN_PARAN parameterList:p CLOSE_PARAN
 				{:
+				RESULT = "("+p+")";
 				:}; 
 
 
-parameterList	::=	parameterDecl
+parameterList	::=	parameterDecl:p
 					{:
+					RESULT = p;
 					:}
-					| parameterDecl COMMA parameterList
+					| parameterDecl:p COMMA parameterList:l
 					{:
+					RESULT = p+","+l;
 					:};
 
 
-parameterDecl	::= identifierList type
+parameterDecl	::= identifierList:i type:t
 					{:
+					RESULT = i+t;
 					:}
-					| identifierList CDOTS type
+					| identifierList:i CDOTS type:t
 					{:
+					RESULT = i+"..."+t;
 					:};
 
 functionBody	::= block
 					{:
+					RESULT = "";
 					:};
 
 
-block	::= OPEN_CURLY statementList CLOSE_CURLY
+block	::= OPEN_CURLY statementList:s CLOSE_CURLY
 			{:
+			RESULT = "{"+s+"}";
 			:};
 
 
-statementList	::=	statement statementList
+statementList	::=	statement:s statementList:l
 					{:
+					RESULT = s+l;
 					:}
 					| 
 					{:
+					RESULT = "";
 					:};
 
 packageClause	::=	PACKAGE packageName:a
 					{:
-					RESULT = "package" + a;
+					RESULT = a;
 					:};
 
 
 importDecls	::=	importDecl optionalSemiColon importDecls
 				{:
+				RESULT = "";
 				:}
 				|
 				{:
+				RESULT = "";
 				:};
 
 importDecl	::=	IMPORT	importSpec
 				{:
+				RESULT = "";
 				:}
 				| IMPORT OPEN_PARAN importSpecs CLOSE_PARAN
 				{:
+				RESULT = "";
 				:};
 
 importSpecs	::=	importSpec optionalSemiColon importSpecs
 				{:
+				RESULT = "";
 				:}
 				| 
 				{:
+				RESULT = "";
 				:};
 
 importSpec	::=	importPath
 				{:
+				RESULT = "";
 				:}
 				| DOT importPath
 				{:
+				RESULT = "";
 				:}
 				| packageName importPath
 				{:
+				RESULT = "";
 				:};
 				
 importPath	::=	STRING_LIT
 				{:
+				RESULT = "";
 				:};
 
-packageName	::=	IDENTIFIER
+packageName	::=	IDENTIFIER:a
 				{:
+				RESULT = a;
 				:};
 
 
 optionalSemiColon	::=	SEMI_COLON
 						{:
+						RESULT = "";
 						:}
 						| 
 						{:
+						RESULT = "";
 						:};
 
 
 assignOp	::=	addOp EQUAL 
 				{:
+				RESULT = "";
 				:} %prec EQUAL
 				| mulOp EQUAL
 				{:
+				RESULT = "";
 				:} %prec EQUAL
 				| EQUAL
 				{:
+				RESULT = "";
 				:};
 
 
 binaryOp	::= OR_OP
 				{:
+				RESULT = "";
 				:}
 				| AND_OP
 				{:
+				RESULT = "";
 				:}
 				| REL_OP
 				{:
+				RESULT = "";
 				:}
 				| addOp
 				{:
+				RESULT = "";
 				:}
 				| mulOp
 				{:
+				RESULT = "";
 				:};
 
 addOp	::=	PLUS
 			{:
+			RESULT = "";
 			:}
 			| MINUS
 			{:
+			RESULT = "";
 			:}
 			| BAR
 			{:
+			RESULT = "";
 			:};
 
 
 mulOp	::=	ASTRISK
 			{:
+			RESULT = "";
 			:}
 			| SLASH
 			{:
+			RESULT = "";
 			:}
 			| SHIFT_LEFT
 			{:
+			RESULT = "";
 			:}
 			| SHIFT_RIGHT
 			{:
+			RESULT = "";
 			:}
 			| PERCENT
 			{:
+			RESULT = "";
 			:}
 			| AMBERSAND
 			{:
+			RESULT = "";
 			:};
-
-
-unaryOp	::=	PLUS
-			{:
-			:}
-			| MINUS
-			{:
-			:}
-			| EXCLAMATION
-			{:
-			:}
-			| ASTRISK
-			{:
-			:}
-			| AMBERSAND
-			{:
-			:}
-			| LESS_DASH
-			{:
-			:};						
-						
