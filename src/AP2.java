@@ -8,7 +8,7 @@ public class AP2 {
 
 	public static void main(String[] args) {
 
-//		System.out.println("koko");
+		System.out.println("test");
 		String inFile = "MS3/Go1.in";
 
 		if (args.length > 1) {
