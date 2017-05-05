@@ -28,7 +28,7 @@ public class Express {
 
 	public Express(Express e, String code, Express f) {
 		// TODO Auto-generated constructor stub
-		this.code = e.code + code + f.code;
+		setCode(e.code + code + f.code);
 
 	}
 

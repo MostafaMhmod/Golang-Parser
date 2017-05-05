@@ -1,1 +1,18 @@
+s = "constant"
 main
+begin_func;
+push_params: s
+t0= callfmt:
+Println
+pop_params;
+n = 5000
+d =3/n
+push_params: d
+t1= callfmt:
+Println
+pop_params;
+e =d-n*2+d
+te!=5
+m = 16
+mShifted =m>>2
+end_func;
